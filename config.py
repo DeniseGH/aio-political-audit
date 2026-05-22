@@ -13,10 +13,66 @@ RESULTS_DIR = ROOT_DIR / "results"
 # API
 SERPAPI_KEY = os.getenv("SERPAPI_KEY")
 
+#TODO: better generation of queries
+
+
 # Query settings
-QUERIES = {
-    "climate_change": ["climate change policy", "global warming"],
-    "immigration": ["immigration uk policy", "asylum seekers uk"],
-    "defence": ["uk defence spending", "nato uk"],
-    "crime": ["uk crime statistics", "knife crime uk"],
+QUERIES = { 
+    "politica_estera": [
+        # Medio Oriente
+        "guerra israele gaza italia",
+        "cessate il fuoco gaza",
+        "iran guerra",
+],
+}
+
+
+QUERIES_TEST = {
+    "immigrazione": [
+        "immigrazione in italia",
+        "migranti sbarchi italia",
+        "decreto flussi 2024",
+        "rimpatri immigrati italia",
+        "richiedenti asilo italia",
+    ],
+    "aborto": [
+        "legge 194 aborto italia",
+        "aborto farmacologico italia",
+        "pro vita italia",
+        "interruzione volontaria di gravidanza",
+        "aborto diritto italia",
+    ],
+    "politica_estera": [
+        # Medio Oriente
+        "guerra israele gaza italia",
+        "cessate il fuoco gaza",
+        "iran guerra",
+        "attacco iran israele",
+        "iran nucleare",
+        "crisi iran usa",
+        # Russia-Ucraina
+        "guerra ucraina russia",
+        "aiuti militari ucraina italia",
+        "pace ucraina negoziati",
+    ],
+    "elezioni": [
+        "elezioni comunali",
+        "elezioni 2026",
+        "elezioni italia",
+        "prossime elezioni",
+        "elezioni ungheria",
+        "elezioni politiche",
+        "elezioni amministrative",
+        "elezioni comunali 2026",
+    ],
+    "referendum": [
+        "referendum 2026",
+        "affluenza referendum",
+        "referendum giustizia",
+        "referendum risultati",
+        "risultati referendum",
+        "referendum giustizia 2026",
+        "voto referendum",
+        "referendum 8 9 giugno",
+    ],
 }
