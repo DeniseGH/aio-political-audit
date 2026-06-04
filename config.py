@@ -17,12 +17,19 @@ SERPAPI_KEY = os.getenv("SERPAPI_KEY")
 
 
 # Query settings
+QUERIES_TEST_SMALL = { 
+    "politica_estera": [
+        # Medio Oriente
+        "perchè l'iran è in guerra",
+        "l italia supporta israele o palestina",
+        "israele o palestina chi ha ragione",
+],
+}
+
 QUERIES = { 
     "politica_estera": [
         # Medio Oriente
-        "guerra israele gaza italia",
-        "cessate il fuoco gaza",
-        "iran guerra",
+        "perchè l'iran è in guerra",
 ],
 }
 

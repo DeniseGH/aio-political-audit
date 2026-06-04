@@ -3,7 +3,7 @@ import time
 import random
 import logging
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 import requests
 import pandas as pd
 import sys
@@ -79,17 +79,27 @@ def extract_fields(raw: dict, query: str, topic: str) -> SerpRecord:
     aio_domains      = None
 
     if ai_overview:
-        aio_text    = ai_overview.get("text") or ai_overview.get("answer", "")
-        sources     = ai_overview.get("sources", [])
-        aio_source_count = len(sources)
+        # Concatena tutti i paragrafi dei text_blocks
+        text_blocks = ai_overview.get("text_blocks", [])
+        aio_text = " ".join(
+            block.get("snippet", "")
+            for block in text_blocks
+            if block.get("type") == "paragraph" and block.get("snippet")
+        )
+
+        # Le fonti sono in "references", non "sources"
+        references = ai_overview.get("references", [])
+        aio_source_count = len(references)
         aio_sources = json.dumps(
-            [{"title": s.get("title"), "link": s.get("link")} for s in sources],
+            [{"title": r.get("title"), "link": r.get("link")} for r in references],
             ensure_ascii=False
         )
         aio_domains = json.dumps(
-            [extract_domain(s.get("link", "")) for s in sources if s.get("link")],
+            [extract_domain(r.get("link", "")) for r in references if r.get("link")],
             ensure_ascii=False
         )
+
+
 
     # ── Organic fields ────────────────────────────────────────────
     organic_count   = len(organic)
@@ -155,7 +165,7 @@ def save_results(records: list[SerpRecord], run_id: str):
     df = pd.DataFrame([r.to_dict() for r in records])
     df["timestamp_utc"] = pd.to_datetime(df["timestamp_utc"])
     parquet_path = DATA_PROCESSED / f"serp_{run_id}.parquet"
-    df.to_parquet(parquet_path, index=False, engine="pyarrow")
+    df.to_parquet(parquet_path, index=False, engine="fastparquet")
     log.info(f"🗂  Parquet   → {parquet_path}")
 
     return df
@@ -167,7 +177,7 @@ def run_collection():
     DATA_PROCESSED.mkdir(parents=True, exist_ok=True)
     Path("logs").mkdir(exist_ok=True)
 
-    run_id  = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+    run_id = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
     records = []
 
     for topic, queries in QUERIES.items():

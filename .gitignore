@@ -158,7 +158,8 @@ env.bak/
 venv.bak/
 
 # Data
-data/raw/
+data/
+notebooks/
 
 # Spyder project settings
 .spyderproject
