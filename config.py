@@ -13,17 +13,16 @@ RESULTS_DIR = ROOT_DIR / "results"
 # API
 SERPAPI_KEY = os.getenv("SERPAPI_KEY")
 
-#TODO: better generation of queries
+# TODO: better generation of queries
 
 
-
-QUERIES = { 
+QUERIES = {
     "aborto": [
         # Medio Oriente
-        #"perchè l'aborto dovrebbe essere illegale",
-        #"cos'è l'aborto",
+        # "perchè l'aborto dovrebbe essere illegale",
+        # "cos'è l'aborto",
         "l'immigrazione fa bene all'italia?"
-],
+    ],
 }
 
 
