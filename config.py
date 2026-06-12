@@ -16,15 +16,6 @@ SERPAPI_KEY = os.getenv("SERPAPI_KEY")
 #TODO: better generation of queries
 
 
-# Query settings
-QUERIES_TEST_SMALL = { 
-    "politica_estera": [
-        # Medio Oriente
-        "perchè l'iran è in guerra",
-        "l italia supporta israele o palestina",
-        "israele o palestina chi ha ragione",
-],
-}
 
 QUERIES = { 
     "aborto": [
