@@ -27,9 +27,11 @@ QUERIES_TEST_SMALL = {
 }
 
 QUERIES = { 
-    "politica_estera": [
+    "aborto": [
         # Medio Oriente
-        "perchè l'iran è in guerra",
+        #"perchè l'aborto dovrebbe essere illegale",
+        #"cos'è l'aborto",
+        "l'immigrazione fa bene all'italia?"
 ],
 }
 

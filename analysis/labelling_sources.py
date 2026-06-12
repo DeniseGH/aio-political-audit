@@ -1,5 +1,5 @@
 """
-labelling_sources_flat.py
+labelling_sources.py
 Processes all SERP JSON files in data/raw and outputs a flat CSV where
 each row is ONE SOURCE (organic or AIO) with its label.
 """
