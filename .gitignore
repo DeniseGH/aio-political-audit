@@ -160,6 +160,7 @@ venv.bak/
 # Data
 data/
 notebooks/
+queries/archive
 
 # Spyder project settings
 .spyderproject
