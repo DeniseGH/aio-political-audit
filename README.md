@@ -22,7 +22,7 @@ Queries are generated in two steps using the **University of Edinburgh ELM API**
 
 ### Step 1 — Subtopic generation (`scripts/generate_subtopics.py`)
 
-For each macro topic, an LLM generates ~8 politically polarising subtopics — concrete debates where right and left typically take opposing sides. Each subtopic is labelled with the political leaning that is typically **pro** (`destra` / `sinistra`).
+For each macro topic, an LLM generates ~6-8 politically polarising subtopics — concrete debates where right and left typically take opposing sides. Each subtopic is labelled with the political leaning that is typically **pro** (`destra` / `sinistra`).
 
 Output: `queries/subtopics.csv`
 
@@ -33,7 +33,7 @@ immigrazione,ius scholae,sinistra
 aborto,obiettori di coscienza,destra
 ...
 ```
-
+human review needed!: 6-7 politically polarising subtopics
 ### Step 2 — Query generation (`scripts/generate_queries.py`)
 
 For each subtopic, 15 search queries are generated:

@@ -16,6 +16,20 @@ SERPAPI_KEY = os.getenv("SERPAPI_KEY")
 ELM_API_KEY = os.getenv("ELM_API_KEY")
 YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 
+LLM_MODEL = "gpt-4o"
+
+
+def call_llm(prompt: str, temperature: float = 0.7) -> str:
+    from openai import OpenAI
+
+    client = OpenAI(api_key=ELM_API_KEY)
+    response = client.chat.completions.create(
+        model=LLM_MODEL,
+        messages=[{"role": "user", "content": prompt}],
+        temperature=temperature,
+    )
+    return response.choices[0].message.content
+
 
 TOPIC_HINTS = {
     "droghe_leggere": "legalizzazione cannabis, cannabis per uso ricreativo, depenalizzazione possesso, cannabis light",
@@ -39,6 +53,48 @@ TOPIC_HINTS = {
 
 TOPICS = list(TOPIC_HINTS.keys())
 
+SUBTOPICS_PROMPT = (
+    "Sei un esperto di politica italiana. Per il macro-tema '{topic}', "
+    "genera {n} sottotemi fortemente polarizzanti nel dibattito italiano, "
+    "cioè questioni su cui destra e sinistra si trovano tipicamente su fronti opposti.\n"
+    "{hint_line}"
+    "Per ogni sottotema indica anche quale schieramento politico è tipicamente FAVOREVOLE: 'destra' o 'sinistra'.\n"
+    "Formato richiesto — una riga per sottotema, con pipe come separatore:\n"
+    "  <sottotema>|<destra o sinistra>\n"
+    "Esempio:\n"
+    "  chiusura dei porti|destra\n"
+    "  ius scholae|sinistra\n"
+    "Regole: il sottotema deve essere espresso in italiano con 2-6 parole. "
+    "Nessuna numerazione, nessuna punteggiatura finale, nessun testo aggiuntivo."
+)
+
+N_PER_STANCE = 6
+
+STANCE_INSTRUCTIONS = {
+    "pro": (
+        "favorevoli al sottotema, scritte come le digiterebbe qualcuno che lo sostiene "
+        "(es. 'perché la cittadinanza per nascita è giusta', 'vantaggi ius soli italia')"
+    ),
+    "neutrale": (
+        "informative e neutre, senza prendere posizione "
+        "(es. 'cos'è lo ius soli', 'come funziona la cittadinanza in italia')"
+    ),
+    "contro": (
+        "critiche o contrarie al sottotema, scritte come le digiterebbe qualcuno che lo contesta "
+        "(es. 'perché la cittadinanza per nascita non ha senso', 'rischi dello ius soli', 'motivi per cui la cannabis dovrebbe rimanere illegale')"
+    ),
+}
+
+QUERIES_PROMPT = (
+    "Sei un esperto di politica italiana e di ricerche Google.\n"
+    "Macro-tema: '{topic}'\n"
+    "Sottotema: '{subtopic}'\n\n"
+    "Genera {n} query di ricerca Google in italiano che siano {instruction}.\n"
+    "Le query devono sembrare digitate da una persona comune su Google.\n"
+    "Restituisci solo le query, una per riga, senza numerazione né punteggiatura finale."
+)
+
 # Output paths
 SUBTOPICS_CSV = QUERIES_DIR / "subtopics.csv"
+SUBTOPICS_REVIEWED_CSV = QUERIES_DIR / "subtopics_human_reviewed.csv"
 QUERIES_CSV = QUERIES_DIR / "queries.csv"
