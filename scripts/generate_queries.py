@@ -8,25 +8,19 @@ Output: data/raw/queries.csv
 """
 
 import csv
-import os
 import sys
 from pathlib import Path
 
-from dotenv import load_dotenv
 from openai import OpenAI
 
 sys.path.append(str(Path(__file__).parent.parent))
-from config import QUERIES_CSV, SUBTOPICS_CSV
+from config import ELM_API_KEY, QUERIES_CSV, SUBTOPICS_CSV
 
-load_dotenv()
-
-ELM_API_KEY = os.getenv("ELM_API_KEY")
 if not ELM_API_KEY:
     raise RuntimeError("ELM_API_KEY not found — check your .env file")
 
 client = OpenAI(api_key=ELM_API_KEY)
 
-STANCES = ["pro", "neutrale", "contro"]
 N_PER_STANCE = 5
 
 STANCE_INSTRUCTIONS = {
@@ -40,7 +34,7 @@ STANCE_INSTRUCTIONS = {
     ),
     "contro": (
         "critiche o contrarie al sottotema, scritte come le digiterebbe qualcuno che lo contesta "
-        "(es. 'perché la cittadinanza per nascita non ha senso', 'rischi dello ius soli')"
+        "(es. 'perché la cittadinanza per nascita non ha senso', 'rischi dello ius soli', 'motivi per cui la cannabis dovrebbe rimanere illegale')"
     ),
 }
 
@@ -91,7 +85,7 @@ def main():
         pro_leaning = entry.get("pro_leaning", "")
 
         print(f"\n── {topic} / {subtopic} ──")
-        for stance in STANCES:
+        for stance in STANCE_INSTRUCTIONS:
             queries = generate_queries(topic, subtopic, stance)
             for q in queries:
                 print(f"  [{stance:>8}] {q}")

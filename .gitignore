@@ -157,10 +157,11 @@ ENV/
 env.bak/
 venv.bak/
 
-# Data
+# Data # TODO: Remove notebooks line/folder before submission
 data/
 notebooks/
 queries/archive
+analysis/archive
 
 # Spyder project settings
 .spyderproject

@@ -114,6 +114,7 @@ Create a `.env` file in the project root:
 ```
 SERPAPI_KEY=your_key_here
 ELM_API_KEY=your_elm_key_here
+YOUTUBE_API_KEY=your_youtube_key_here
 ```
 
 ### Run the pipeline
