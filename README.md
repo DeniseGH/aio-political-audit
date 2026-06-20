@@ -1,6 +1,6 @@
 # aio-political-audit
 
-> ⚠️ **Work in Progress** — this repository reflects the current state of an ongoing MSc dissertation project. Everything, scope, structure, scripts, and methodology are actively evolving.
+> ⚠️ **Work in Progress** — this repository reflects the current state of an ongoing MSc dissertation project. Everything — scope, structure, scripts, and methodology — is actively evolving.
 
 An empirical audit of **Google AI Overviews (AIO)** on politically sensitive Italian-language queries. The project investigates whether AIO systematically privileges certain sources, framings, or perspectives across politically polarising topics — and whether the sources overlap with organic page rankings.
 
@@ -18,59 +18,82 @@ This research is conducted as part of an MSc in Data and Artificial Intelligence
 
 ## Query Generation Pipeline
 
-Queries are generated in two steps using the **University of Edinburgh ELM API** (OpenAI-compatible):
+Queries are generated in three steps using the **University of Edinburgh ELM API** (OpenAI-compatible).
 
 ### Step 1 — Subtopic generation (`scripts/generate_subtopics.py`)
 
-For each macro topic, an LLM generates ~6-8 politically polarising subtopics — concrete debates where right and left typically take opposing sides. Each subtopic is labelled with the political leaning that is typically **pro** (`destra` / `sinistra`).
+For each macro topic, an LLM generates ~8 politically polarising subtopics — concrete debates where right and left typically take opposing sides. Each subtopic is labelled with the political leaning that is typically **pro**:
+- `destra` (right-wing)
+- `sinistra` (left-wing)
 
 Output: `queries/subtopics.csv`
 
 ```
 topic,subtopic,pro_leaning
 immigrazione,chiusura dei porti,destra
+immigrazione (immigration),chiusura dei porti (port closure),destra (right-wing)
 immigrazione,ius scholae,sinistra
-aborto,obiettori di coscienza,destra
+aborto (abortion),obiettori di coscienza (conscientious objectors),destra (right-wing)
 ...
 ```
-human review needed!: 6-7 politically polarising subtopics
+
+> ⚠️ **Human review required** — subtopic labels and political orientations are LLM-generated simplifications and must be validated before proceeding to Step 2.
+
+### Step 1b — Human review
+
+After generation, review and edit `queries/subtopics.csv` and save it as `queries/subtopics_human_reviewed.csv`. The reviewed file adds extra columns: `topic_english`, `parties_pro`, and `cross-partisan`.
+
 ### Step 2 — Query generation (`scripts/generate_queries.py`)
 
-For each subtopic, 15 search queries are generated:
+Reads `subtopics_human_reviewed.csv` and generates **18 search queries per subtopic**:
 
 | Stance | Count | Description |
 |---|---|---|
-| `pro` | 5 | Supportive of the subtopic ("perché lo ius scholae è giusto") |
-| `neutrale` | 5 | Informational, no stance ("cos'è lo ius scholae") |
-| `contro` | 5 | Critical of the subtopic ("perché lo ius scholae non funziona") |
+| `pro` (supportive) | 6 | Supportive of the subtopic — e.g. *"perché lo ius scholae è giusto"* ("why ius scholae is right") |
+| `neutrale` (neutral) | 6 | Informational, no stance — e.g. *"cos'è lo ius scholae"* ("what is ius scholae") |
+| `contro` (critical) | 6 | Critical of the subtopic — e.g. *"perché lo ius scholae non funziona"* ("why ius scholae doesn't work") |
 
 Output: `queries/queries.csv`
 
 ```
-topic,subtopic,pro_leaning,stance,query
-immigrazione,chiusura dei porti,destra,pro,perché chiudere i porti è necessario
-immigrazione,chiusura dei porti,destra,neutrale,cosa significa chiusura dei porti
-immigrazione,chiusura dei porti,destra,contro,perché la chiusura dei porti è illegale
+topic_english,topic,subtopic,pro_leaning,parties_pro,cross-partisan,stance,query
+immigration,immigrazione,chiusura dei porti,destra,,,pro,perché chiudere i porti è necessario
+immigration,immigrazione,chiusura dei porti,destra,,,neutrale,cosa significa chiusura dei porti
+immigration,immigrazione,chiusura dei porti,destra,,,contro,perché la chiusura dei porti è illegale
 ...
 ```
+
+### Step 3 — Data collection (`scripts/serpapi_collector.py`)
+
+Fetches Google SERP results for every query via the SerpAPI, extracting AI Overview content and organic results. Supports resume mode (skips already-collected queries) and a two-stage AIO fetch (inline content + `page_token` fallback).
+
+Output: `data/raw/serp_raw_<timestamp>.json` + `data/processed/serp_<timestamp>.parquet`
 
 ---
 
 ## Topics
 
-| Topic | Examples of subtopics |
-|---|---|
-| `droghe_leggere` | legalizzazione cannabis, depenalizzazione possesso |
-| `sicurezza_pubblica` | daspo urbano, videosorveglianza, porto d'armi |
-| `gpa_utero_in_affitto` | GPA altruistica, reato universale GPA |
-| `aborto` | obiettori di coscienza, pillola RU486 |
-| `immigrazione` | chiusura dei porti, rimpatri forzati |
-| `diritti_lgbtq` | adozione arcobaleno, stepchild adoption |
-| `cittadinanza` | ius soli, ius scholae, doppia cittadinanza |
-| `fine_vita` | eutanasia legale, testamento biologico |
-| `separazione delle carriere` | riforma CSM, giudici e PM separati |
-| `premierato` | elezione diretta del premier, riforma costituzionale |
-| `energia_nucleare` | nucleare di nuova generazione, small modular reactor |
+17 macro topics covering the main axes of political debate in Italy:
+
+| Topic (Italian) | Topic (English) | Example subtopics |
+|---|---|---|
+| `droghe_leggere` | Soft drugs | cannabis legalisation, decriminalisation of possession |
+| `sicurezza_pubblica` | Public safety | urban banning orders (*daspo urbano*), CCTV, right to carry arms |
+| `gpa_utero_in_affitto` | Surrogacy | altruistic surrogacy (*GPA altruistica*), universal crime of surrogacy |
+| `aborto` | Abortion | conscientious objectors, RU486 pill |
+| `immigrazione` | Immigration | port closures, forced repatriation, security decrees |
+| `diritti_lgbtq` | LGBTQ+ rights | rainbow adoption, stepchild adoption, gender identity at school |
+| `cittadinanza` | Citizenship | *ius soli* (birthright), *ius scholae* (school-based citizenship), dual nationality |
+| `fine_vita` | End of life | legal euthanasia, assisted suicide, living wills |
+| `separazione delle carriere` | Separation of judicial careers | CSM (*Consiglio Superiore della Magistratura*) reform, separation of judges and prosecutors |
+| `premierato` | Prime-ministerialism | direct election of the Prime Minister, constitutional reform |
+| `energia_nucleare` | Nuclear energy | next-generation nuclear, small modular reactors, energy transition |
+| `armi_ucraina` | Arms to Ukraine | military support to Ukraine, Italian neutrality, conflict escalation |
+| `memoria_storica_antifascismo` | Historical memory / anti-fascism | April 25th commemorations, historical revisionism, fascism and anti-fascism |
+| `liberta_di_stampa_rai` | Press freedom / public broadcasting | RAI reform, public media, *par condicio* (equal media access), freedom of information |
+| `costo_della_vita_tasse` | Cost of living / taxation | flat tax, payroll tax wedge (*cuneo fiscale*), inflation, purchasing power |
+| `fuga_dei_cervelli` | Brain drain | incentives for return migrants, public universities, research investment |
+| `israele_palestina` | Israel-Palestine | recognition of Palestine, arms embargo on Israel, two-state solution |
 
 ---
 
@@ -79,22 +102,30 @@ immigrazione,chiusura dei porti,destra,contro,perché la chiusura dei porti è i
 ```
 aio-political-audit/
 ├── scripts/
-│   ├── generate_subtopics.py     # Step 1: LLM-generated subtopics → queries/subtopics.csv
-│   ├── generate_queries.py       # Step 2: LLM-generated queries   → queries/queries.csv
-│   └── serpapi_collector.py      # SerpAPI data collection pipeline
+│   ├── generate_subtopics.py      # Step 1: LLM subtopics → queries/subtopics.csv
+│   ├── generate_queries.py        # Step 2: LLM queries   → queries/queries.csv
+│   ├── serpapi_collector.py       # Step 3: SerpAPI data collection + AIO extraction
+│   └── schema.py                  # SerpRecord dataclass (schema for collected records)
 ├── analysis/
-│   └── labelling_sources.py      # Source credibility labelling (MBFC + manual)
-├── queries/                      # Generated subtopics and queries (gitignored)
+│   ├── aio_analysis.ipynb         # Main analysis notebook (AIO presence, overlap, UGC, domains)
+│   └── archive/
+│       └── labelling_sources.py   # Archived source credibility labelling script
+├── notebooks/
+│   └── news_media_bias_and_factuality_dataexploration.ipynb  # MBFC dataset exploration
+├── queries/                       # Generated subtopics and queries (gitignored)
 │   ├── subtopics.csv
+│   ├── subtopics_human_reviewed.csv
 │   └── queries.csv
 ├── data/
-│   ├── raw/                      # Raw JSON responses from SerpAPI (gitignored)
-│   └── processed/                # Parquet files after extraction (gitignored)
-├── config.py                     # Topics, paths, API key loading
-├── main.py                       # Entry point
-├── pyproject.toml                # Dependencies (managed with uv)
-├── .pre-commit-config.yaml       # Pre-commit hooks (ruff, detect-secrets)
-└── .python-version               # Python 3.13
+│   ├── raw/                       # Raw JSON responses from SerpAPI (gitignored)
+│   └── processed/                 # Parquet files after extraction (gitignored)
+├── results/                       # Output figures and tables
+├── logs/                          # Collection logs (serpapi_collection.log)
+├── config.py                      # Topics, prompts, paths, API key loading, LLM helper
+├── main.py                        # Entry point (placeholder)
+├── pyproject.toml                 # Dependencies (managed with uv)
+├── .pre-commit-config.yaml        # Pre-commit hooks (ruff, detect-secrets)
+└── .python-version                # Python 3.13
 ```
 
 ---
@@ -123,20 +154,70 @@ YOUTUBE_API_KEY=your_youtube_key_here
 # Step 1: generate subtopics
 uv run python scripts/generate_subtopics.py
 
-# Step 2: generate queries from subtopics
+# Step 1b: review queries/subtopics.csv manually and save as queries/subtopics_human_reviewed.csv
+
+# Step 2: generate queries from human-reviewed subtopics
 uv run python scripts/generate_queries.py
 
 # Step 3: collect AIO + organic results via SerpAPI
 uv run python scripts/serpapi_collector.py
 ```
 
+Data collection supports **resume mode** — if a run is interrupted, re-running will skip already-collected queries automatically.
+
+### Run the analysis
+
+```bash
+uv run jupyter notebook analysis/aio_analysis.ipynb
+```
+
 ---
 
-## Source Credibility Pipeline (WIP)
+## Data Collection Schema
 
-Sources are labelled using a two-layer approach:
+Each collected record (`SerpRecord`) contains:
 
-1. **MBFC dataset** (`sergioburdisso/news_media_bias_and_factuality`) — bias and factual reporting ratings for international outlets, fetched via the HuggingFace Datasets API.
+| Field | Description |
+|---|---|
+| `query` | The search query |
+| `topic` | Macro topic (Italian label) |
+| `subtopic` | Specific debate subtopic |
+| `pro_leaning` | Political leaning typically pro this subtopic (`destra` / `sinistra` — right-wing / left-wing) |
+| `stance` | Query framing (`pro` / `neutrale` / `contro` — supportive / neutral / critical) |
+| `timestamp_utc` | Collection time (ISO 8601, UTC) |
+| `has_ai_overview` | Whether Google returned an AIO for this query |
+| `aio_text` | Full AIO text extracted from text blocks |
+| `aio_sources` | JSON list of AIO-cited sources `[{title, link}]` |
+| `aio_source_count` | Number of sources cited in AIO |
+| `aio_domains` | JSON list of domains cited in AIO |
+| `organic_count` | Number of organic results returned |
+| `organic_json` | Full organic top-10 as JSON |
+| `organic_domains` | JSON list of domains in organic top-10 |
+| `aio_organic_overlap` | Share of AIO-cited domains also present in organic top-10 |
+| `org1_*` / `org2_*` / `org3_*` | Title, link, and normalised date for top-3 organic results |
+
+---
+
+## Analysis Notebook (`analysis/aio_analysis.ipynb`)
+
+The notebook loads all collected `serp_raw_*.json` files and runs the following analyses:
+
+1. **AIO presence per topic** — how often AIO appears for each macro topic
+2. **AIO presence per stance** — whether `pro` / `neutrale` / `contro` queries trigger AIO at different rates
+3. **Consistency** — for queries collected more than once, did AIO appear consistently?
+4. **AIO presence per subtopic** — granular breakdown within each topic
+5. **AIO–Organic Overlap** — share of AIO-cited domains also appearing in the organic top-10, by topic, subtopic, stance, and their combination
+6. **UGC Sources** — how often user-generated content platforms (YouTube, Reddit, Twitter/X, etc.) appear in AIO vs organic, including a YouTube channel deep-dive via the YouTube Data API v3
+7. **Top Cited Domains** — raw and deduplicated citation counts, rank comparison between AIO and organic, per-topic heatmaps
+8. **AIO Content Stats** — source count, text length (chars and words) distributions, broken down by topic and stance
+
+---
+
+## Source Credibility Pipeline (Planned)
+
+Sources will be labelled using a two-layer approach:
+
+1. **MBFC dataset** (`sergioburdisso/news_media_bias_and_factuality`) — bias and factual reporting ratings for international outlets, fetched via the HuggingFace Datasets API. (See `notebooks/news_media_bias_and_factuality_dataexploration.ipynb`)
 2. **Manual Italian supplement** (`data/italian_sources.csv`) — hand-curated credibility ratings for Italian-language outlets not covered by MBFC, drawing on NewsGuard, Reuters Institute Digital News Report, and AGCOM ROC registration status.
 
 ---
@@ -157,12 +238,12 @@ uv run pre-commit run --all-files
 | Component | Status |
 |---|---|
 | Subtopic generation (LLM) | ✅ Working |
-| Query generation — pro / neutral / contra (LLM) | ✅ Working |
-| Data collection via SerpAPI | ✅ Working |
-| AIO extraction + retry logic | ✅ Working |
-| Source credibility labelling (MBFC) | 🔄 In progress |
-| Italian sources manual supplement | 🔄 In progress |
-| AIO–organic overlap analysis | 📋 Planned |
+| Query generation — pro / neutrale / contro (LLM) | ✅ Working |
+| Data collection via SerpAPI (with resume mode) | ✅ Working |
+| AIO extraction + two-stage retry logic | ✅ Working |
+| Analysis notebook (AIO presence, overlap, UGC, domains) | 🔄 In progress (3 topics collected so far) |
+| Source credibility labelling (MBFC) | 📋 Planned |
+| Italian sources manual supplement | 📋 Planned |
 
 ---
 
