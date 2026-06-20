@@ -2,17 +2,17 @@
 
 > ⚠️ **Work in Progress** — this repository reflects the current state of an ongoing MSc dissertation project. Everything — scope, structure, scripts, and methodology — is actively evolving.
 
-An empirical audit of **Google AI Overviews (AIO)** on politically sensitive Italian-language queries. The project investigates whether AIO systematically privileges certain sources, framings, or perspectives across politically polarising topics — and whether the sources overlap with organic page rankings.
+An empirical audit of **Google AI Overviews (AIO)** on politically sensitive Italian-language queries. The project investigates whether AIO appears or not, if systematically privileges certain sources, framings, or perspectives across politically polarising topics in Italy— and whether the sources overlap with organic page rankings.
 
-This research is conducted as part of an MSc in Data and Artificial Intelligence Ethics at the **University of Edinburgh (Edinburgh Futures Institute)**, funded by a **Banca d'Italia scholarship** and in partnership with **Democracy Reporting International**.
+This research is conducted as part of an MSc in Data and Artificial Intelligence Ethics at the **University of Edinburgh (Edinburgh Futures Institute)**, in partnership with **Democracy Reporting International**. I am funded by a **Banca d'Italia Giorgio Mortara scholarship**
 
 ---
 
 ## Research Questions
 
-- Do AI Overviews appear consistently across politically sensitive query types, or is presence itself uneven across topics and/or political leaning?
-- How much overlap exists between AIO-cited sources and organic search results?
-- Do AIO responses differ systematically depending on the political stance embedded in the query?
+- RQ1: Do AI Overviews appear consistently across politically sensitive query types, or is presence itself uneven across topics and/or political leaning?
+- RQ2: How much overlap exists between AIO-cited sources and organic search results?
+- RQ3: Do AIO responses differ systematically depending on the political stance embedded in the query?
 
 ---
 
@@ -30,18 +30,16 @@ Output: `queries/subtopics.csv`
 
 ```
 topic,subtopic,pro_leaning
-immigrazione,chiusura dei porti,destra
 immigrazione (immigration),chiusura dei porti (port closure),destra (right-wing)
-immigrazione,ius scholae,sinistra
 aborto (abortion),obiettori di coscienza (conscientious objectors),destra (right-wing)
 ...
 ```
 
-> ⚠️ **Human review required** — subtopic labels and political orientations are LLM-generated simplifications and must be validated before proceeding to Step 2.
-
 ### Step 1b — Human review
 
-After generation, review and edit `queries/subtopics.csv` and save it as `queries/subtopics_human_reviewed.csv`. The reviewed file adds extra columns: `topic_english`, `parties_pro`, and `cross-partisan`.
+> ⚠️ **Human review required** — subtopic labels and political orientations are LLM-generated simplifications and must be validated before proceeding to Step 2.
+
+After generation, review and edit `queries/subtopics.csv` and save it as `queries/subtopics_human_reviewed.csv`. The human reviewer can add extra columns: `topic_english`, `parties_pro`, and `cross-partisan`. In this case `queries/subtopics_human_reviewed.csv` contains ~6/7 subtopics per topic (111 subtopics in total).
 
 ### Step 2 — Query generation (`scripts/generate_queries.py`)
 
@@ -63,6 +61,8 @@ immigration,immigrazione,chiusura dei porti,destra,,,contro,perché la chiusura 
 ...
 ```
 
+This step creates ~2000 queries.
+
 ### Step 3 — Data collection (`scripts/serpapi_collector.py`)
 
 Fetches Google SERP results for every query via the SerpAPI, extracting AI Overview content and organic results. Supports resume mode (skips already-collected queries) and a two-stage AIO fetch (inline content + `page_token` fallback).
@@ -73,7 +73,7 @@ Output: `data/raw/serp_raw_<timestamp>.json` + `data/processed/serp_<timestamp>.
 
 ## Topics
 
-17 macro topics covering the main axes of political debate in Italy:
+17 macro topics highly polarizing in the Italian political debate:
 
 | Topic (Italian) | Topic (English) | Example subtopics |
 |---|---|---|
@@ -92,7 +92,7 @@ Output: `data/raw/serp_raw_<timestamp>.json` + `data/processed/serp_<timestamp>.
 | `memoria_storica_antifascismo` | Historical memory / anti-fascism | April 25th commemorations, historical revisionism, fascism and anti-fascism |
 | `liberta_di_stampa_rai` | Press freedom / public broadcasting | RAI reform, public media, *par condicio* (equal media access), freedom of information |
 | `costo_della_vita_tasse` | Cost of living / taxation | flat tax, payroll tax wedge (*cuneo fiscale*), inflation, purchasing power |
-| `fuga_dei_cervelli` | Brain drain | incentives for return migrants, public universities, research investment |
+| `fuga_dei_cervelli` | Brain drain | incentives for return educated Italian migrants |
 | `israele_palestina` | Israel-Palestine | recognition of Palestine, arms embargo on Israel, two-state solution |
 
 ---
@@ -103,16 +103,13 @@ Output: `data/raw/serp_raw_<timestamp>.json` + `data/processed/serp_<timestamp>.
 aio-political-audit/
 ├── scripts/
 │   ├── generate_subtopics.py      # Step 1: LLM subtopics → queries/subtopics.csv
+subtopics_human_reviewed.csv
 │   ├── generate_queries.py        # Step 2: LLM queries   → queries/queries.csv
 │   ├── serpapi_collector.py       # Step 3: SerpAPI data collection + AIO extraction
 │   └── schema.py                  # SerpRecord dataclass (schema for collected records)
 ├── analysis/
 │   ├── aio_analysis.ipynb         # Main analysis notebook (AIO presence, overlap, UGC, domains)
-│   └── archive/
-│       └── labelling_sources.py   # Archived source credibility labelling script
-├── notebooks/
-│   └── news_media_bias_and_factuality_dataexploration.ipynb  # MBFC dataset exploration
-├── queries/                       # Generated subtopics and queries (gitignored)
+├── queries/                       # Generated subtopics and queries (gitignored for the moment)
 │   ├── subtopics.csv
 │   ├── subtopics_human_reviewed.csv
 │   └── queries.csv
@@ -198,9 +195,9 @@ Each collected record (`SerpRecord`) contains:
 
 ---
 
-## Analysis Notebook (`analysis/aio_analysis.ipynb`)
+## Analysis Notebook (`analysis/aio_analysis.ipynb`) (WIP)
 
-The notebook loads all collected `serp_raw_*.json` files and runs the following analyses:
+The notebook aims to load all collected `serp_raw_*.json` files and runs the following analyses:
 
 1. **AIO presence per topic** — how often AIO appears for each macro topic
 2. **AIO presence per stance** — whether `pro` / `neutrale` / `contro` queries trigger AIO at different rates
@@ -211,14 +208,6 @@ The notebook loads all collected `serp_raw_*.json` files and runs the following 
 7. **Top Cited Domains** — raw and deduplicated citation counts, rank comparison between AIO and organic, per-topic heatmaps
 8. **AIO Content Stats** — source count, text length (chars and words) distributions, broken down by topic and stance
 
----
-
-## Source Credibility Pipeline (Planned)
-
-Sources will be labelled using a two-layer approach:
-
-1. **MBFC dataset** (`sergioburdisso/news_media_bias_and_factuality`) — bias and factual reporting ratings for international outlets, fetched via the HuggingFace Datasets API. (See `notebooks/news_media_bias_and_factuality_dataexploration.ipynb`)
-2. **Manual Italian supplement** (`data/italian_sources.csv`) — hand-curated credibility ratings for Italian-language outlets not covered by MBFC, drawing on NewsGuard, Reuters Institute Digital News Report, and AGCOM ROC registration status.
 
 ---
 
@@ -242,8 +231,6 @@ uv run pre-commit run --all-files
 | Data collection via SerpAPI (with resume mode) | ✅ Working |
 | AIO extraction + two-stage retry logic | ✅ Working |
 | Analysis notebook (AIO presence, overlap, UGC, domains) | 🔄 In progress (3 topics collected so far) |
-| Source credibility labelling (MBFC) | 📋 Planned |
-| Italian sources manual supplement | 📋 Planned |
 
 ---
 
