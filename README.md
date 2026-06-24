@@ -10,9 +10,9 @@ This research is conducted as part of an MSc in Data and Artificial Intelligence
 
 ## Research Questions
 
-RQ1 — Opacity of activation: To what extent does the presence of an AI Overview vary systematically across politically contested topics and query framing (e.g. pro/con phrasing), and what are the normative implications of this variation given that Google discloses no criteria for when an AI Overview is triggered?
-RQ2 — Source diversity: To what extent does AIO concentrate citations among a small number of recurring domains compared to the more dispersed source pool of organic results, and what does this concentration imply for the diversity of perspectives users encounter?
-RQ3 — Provenance and accountability of cited content: To what degree do AIO citations rely on user-generated or non-editorially-accountable content (e.g. individual users YouTube channels) rather than institutionally accountable sources (news outlets, official channels), and what are the implications for accountability and traceability of claims surfaced by AIO on politically sensitive topics?
+- RQ1 — Opacity of activation: To what extent does the presence of an AI Overview vary systematically across politically contested topics and query framing (e.g. pro/con phrasing), and what are the normative implications of this variation given that Google discloses no criteria for when an AI Overview is triggered?
+- RQ2 — Source diversity: To what extent does AIO concentrate citations among a small number of recurring domains compared to the more dispersed source pool of organic results, and what does this concentration imply for the diversity of perspectives users encounter?
+- RQ3 — Provenance and accountability of cited content: To what degree do AIO citations rely on user-generated or non-editorially-accountable content (e.g. individual users YouTube channels) rather than institutionally accountable sources (news outlets, official channels), and what are the implications for accountability and traceability of claims surfaced by AIO on politically sensitive topics?
 
 ---
 
