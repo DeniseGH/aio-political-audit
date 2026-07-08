@@ -68,7 +68,7 @@ SUBTOPICS_PROMPT = (
     "Nessuna numerazione, nessuna punteggiatura finale, nessun testo aggiuntivo."
 )
 
-N_PER_STANCE = 6
+N_PER_STANCE = 8
 
 STANCE_INSTRUCTIONS = {
     "pro": (
@@ -76,8 +76,8 @@ STANCE_INSTRUCTIONS = {
         "(es. 'perché la cittadinanza per nascita è giusta', 'vantaggi ius soli italia')"
     ),
     "neutrale": (
-        "informative e neutre, senza prendere posizione "
-        "(es. 'cos'è lo ius soli', 'come funziona la cittadinanza in italia')"
+        "informative e neutre, senza prendere posizione, senza assumere che ci siano benefici o svantaggi, scritte come le digiterebbe qualcuno che vuole informarsi in modo generico"
+        "(es. 'cos'è lo ius soli', 'come funziona la richiesta di cittadinanza in italia')"
     ),
     "contro": (
         "critiche o contrarie al sottotema, scritte come le digiterebbe qualcuno che lo contesta "
@@ -89,8 +89,9 @@ QUERIES_PROMPT = (
     "Sei un esperto di politica italiana e di ricerche Google.\n"
     "Macro-tema: '{topic}'\n"
     "Sottotema: '{subtopic}'\n\n"
+    "Motivo per cui il sottotema è controverso: '{reason}'\n\n"
     "Genera {n} query di ricerca Google in italiano che siano {instruction}.\n"
-    "Le query devono sembrare digitate da una persona comune su Google.\n"
+    "Le query devono sembrare digitate da una persona comune su Google e non eccessivamente lunghe.\n"
     "Restituisci solo le query, una per riga, senza numerazione né punteggiatura finale."
 )
 
@@ -98,3 +99,4 @@ QUERIES_PROMPT = (
 SUBTOPICS_CSV = QUERIES_DIR / "subtopics.csv"
 SUBTOPICS_REVIEWED_CSV = QUERIES_DIR / "subtopics_human_reviewed.csv"
 QUERIES_CSV = QUERIES_DIR / "queries.csv"
+QUERIES_REVIEWED_CSV = QUERIES_DIR / "queries_human_reviewed.csv"

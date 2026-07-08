@@ -17,14 +17,26 @@ class SerpRecord:
 
     # ── AI Overview ───────────────────────────────────────────────
     has_ai_overview: bool = False
+    aio_fetch_attempts: int = 1  # SerpAPI calls before AIO appeared (or gave up)
     aio_text: Optional[str] = None  # testo completo AIO
-    aio_sources: Optional[str] = None  # JSON list: [{title, link}]
+    aio_sources: Optional[str] = None  # JSON list: [{title, link, snippet}]
     aio_source_count: int = 0  # n. fonti citate nell'AIO
     aio_domains: Optional[str] = None  # JSON list of domains citati nell'AIO
+    aio_block_types: Optional[str] = None  # JSON list of block types (paragraph/list/…)
+
+    # ── Featured snippet ─────────────────────────────────────────
+    has_featured_snippet: bool = False
+    featured_snippet_text: Optional[str] = None
+
+    # ── People Also Ask ──────────────────────────────────────────
+    paa_questions: Optional[str] = None  # JSON list of question strings
+
+    # ── Related searches ─────────────────────────────────────────
+    related_searches: Optional[str] = None  # JSON list of query strings
 
     # ── Organic results ───────────────────────────────────────────
     organic_count: int = 0  # n. risultati organici ritornati
-    organic_json: Optional[str] = None  # lista completa come JSON string
+    organic_json: Optional[str] = None  # lista completa come JSON string (incl. date)
     organic_domains: Optional[str] = None  # JSON list of domains top-10
 
     # ── AIO vs Organic overlap ────────────────────────────────────
