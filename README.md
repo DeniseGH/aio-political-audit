@@ -231,6 +231,7 @@ uv run pre-commit run --all-files
 | Data collection via SerpAPI (with resume mode) | ✅ Working |
 | AIO extraction + two-stage retry logic | ✅ Working |
 | Analysis notebook (AIO presence, overlap, UGC, domains) | 🔄 In progress (3 topics collected so far) |
+| Estimate of the CO₂ impact of this project | 🔄 In progress
 
 ---
 

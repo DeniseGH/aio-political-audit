@@ -13,7 +13,7 @@ from typing import Optional
 from urllib.parse import urlparse
 
 sys.path.append(str(Path(__file__).parent.parent))
-from config import SERPAPI_KEY, QUERIES_CSV, DATA_RAW, DATA_PROCESSED
+from config import SERPAPI_KEY, QUERIES_REVIEWED_CSV, DATA_RAW, DATA_PROCESSED
 from schema import SerpRecord
 
 # ── Logging ───────────────────────────────────────────────────────────────────
@@ -42,8 +42,9 @@ def fetch_aio_content(page_token: str) -> dict:
 
 
 def fetch_serp(
-    query: str, lang: str = "it", country: str = "it", retries: int = 3
-) -> dict:
+    query: str, lang: str = "it", country: str = "it", retries: int = 2
+) -> tuple[dict, int]:
+    """Returns (raw_response, number_of_attempts)."""
     params = {
         "engine": "google",
         "q": query,
@@ -73,7 +74,7 @@ def fetch_serp(
         if has_text or has_refs:
             if attempt > 0:
                 log.info(f"   AIO inline content captured on attempt {attempt + 1}")
-            return raw
+            return raw, attempt + 1
 
         # ── Case 2: page_token — requires a second request ────────
         page_token = ai_overview.get("page_token")
@@ -88,7 +89,7 @@ def fetch_serp(
                     log.warning("   AIO second-stage returned no content")
             except Exception as e:
                 log.error(f"   AIO second-stage fetch failed: {e}")
-            return raw  # don't retry on page_token path
+            return raw, attempt + 1  # don't retry on page_token path
 
         # ── Case 3: AIO shell with empty blocks — retry ───────────
         if ai_overview:
@@ -110,16 +111,22 @@ def fetch_serp(
         time.sleep(wait)
 
     log.warning(f"   AIO absent after {retries} attempts — recording as no AIO")
-    return last_raw
+    return last_raw, retries
 
 
 def load_queries() -> list[dict]:
-    if not QUERIES_CSV.exists():
+    if not QUERIES_REVIEWED_CSV.exists():
         raise FileNotFoundError(
-            f"queries.csv not found at {QUERIES_CSV} — run generate_queries.py first"
+            f"queries_human_reviewed.csv not found at {QUERIES_REVIEWED_CSV}.\n"
+            "It is necessary to review the LLM output before running the collector. "
+            "Please open queries/queries.csv, review the generated queries, "
+            "and rename the file to queries_human_reviewed.csv once done."
         )
-    with open(QUERIES_CSV, newline="", encoding="utf-8") as f:
-        return list(csv.DictReader(f))
+    with open(QUERIES_REVIEWED_CSV, newline="", encoding="utf-8") as f:
+        sample = f.read(2048)
+        f.seek(0)
+        delimiter = ";" if sample.count(";") > sample.count(",") else ","
+        return list(csv.DictReader(f, delimiter=delimiter))
 
 
 def extract_fields(
@@ -129,6 +136,7 @@ def extract_fields(
     subtopic: str = None,
     pro_leaning: str = None,
     stance: str = None,
+    aio_fetch_attempts: int = 1,
 ) -> SerpRecord:
     now = datetime.now(timezone.utc)
     ai_overview = raw.get("ai_overview", None)
@@ -138,6 +146,7 @@ def extract_fields(
     aio_sources = None
     aio_source_count = 0
     aio_domains = None
+    aio_block_types = None
 
     if ai_overview:
         text_blocks = ai_overview.get("text_blocks", [])
@@ -150,20 +159,55 @@ def extract_fields(
         aio_text = " ".join(snippets) if snippets else None
 
         if text_blocks:
+            types = [b.get("type", "unknown") for b in text_blocks]
+            aio_block_types = json.dumps(types, ensure_ascii=False)
             type_counts = {}
-            for b in text_blocks:
-                t = b.get("type", "unknown")
+            for t in types:
                 type_counts[t] = type_counts.get(t, 0) + 1
             log.info(f"   AIO block types: {type_counts}")
 
         references = ai_overview.get("references", [])
         aio_source_count = len(references)
         aio_sources = json.dumps(
-            [{"title": r.get("title"), "link": r.get("link")} for r in references],
+            [
+                {
+                    "title": r.get("title"),
+                    "link": r.get("link"),
+                    "snippet": r.get(
+                        "snippet"
+                    ),  # excerpt cited by AIO (when available)
+                }
+                for r in references
+            ],
             ensure_ascii=False,
         )
         aio_domains = json.dumps(
             [extract_domain(r.get("link", "")) for r in references if r.get("link")],
+            ensure_ascii=False,
+        )
+
+    # ── Featured snippet ─────────────────────────────────────────
+    answer_box = raw.get("answer_box", {})
+    has_featured_snippet = bool(answer_box)
+    featured_snippet_text = (
+        answer_box.get("snippet") or answer_box.get("answer") or None
+    )
+
+    # ── People Also Ask ──────────────────────────────────────────
+    paa_questions = None
+    raw_paa = raw.get("related_questions", [])
+    if raw_paa:
+        paa_questions = json.dumps(
+            [q.get("question") for q in raw_paa if q.get("question")],
+            ensure_ascii=False,
+        )
+
+    # ── Related searches ─────────────────────────────────────────
+    related_searches = None
+    raw_rs = raw.get("related_searches", [])
+    if raw_rs:
+        related_searches = json.dumps(
+            [s.get("query") for s in raw_rs if s.get("query")],
             ensure_ascii=False,
         )
 
@@ -179,9 +223,15 @@ def extract_fields(
     if ai_overview and aio_domains:
         aio_dom_set = set(json.loads(aio_domains))
         org_dom_set = set(json.loads(organic_domains))
-        aio_organic_overlap = (
-            len(aio_dom_set & org_dom_set) / len(aio_dom_set) if aio_dom_set else None
-        )
+
+        if not org_dom_set:
+            aio_organic_overlap = None  # no organic domains to compare against — distinct from a real 0% overlap
+        else:
+            aio_organic_overlap = (
+                len(aio_dom_set & org_dom_set) / len(aio_dom_set)
+                if aio_dom_set
+                else None
+            )
 
     # ── Top 3 organic flat ────────────────────────────────────────
     def _get(i, key):
@@ -194,6 +244,7 @@ def extract_fields(
         pro_leaning=pro_leaning,
         stance=stance,
         has_ai_overview=ai_overview is not None,
+        aio_fetch_attempts=aio_fetch_attempts,
         aio_text=aio_text,
         aio_sources=aio_sources,
         aio_source_count=aio_source_count,
@@ -206,6 +257,7 @@ def extract_fields(
                     "title": r.get("title"),
                     "link": r.get("link"),
                     "snippet": r.get("snippet"),
+                    "date": parse_date(r.get("date"), now),
                 }
                 for r in organic[:10]
             ],
@@ -213,6 +265,11 @@ def extract_fields(
         ),
         organic_domains=organic_domains,
         aio_organic_overlap=aio_organic_overlap,
+        aio_block_types=aio_block_types,
+        has_featured_snippet=has_featured_snippet,
+        featured_snippet_text=featured_snippet_text,
+        paa_questions=paa_questions,
+        related_searches=related_searches,
         org1_title=_get(0, "title"),
         org1_link=_get(0, "link"),
         org1_date=parse_date(_get(0, "date"), now),
@@ -246,23 +303,34 @@ def parse_date(date_str: Optional[str], reference: datetime) -> Optional[str]:
     return parsed.isoformat() if parsed else date_str
 
 
+MASTER_PARQUET = DATA_PROCESSED / "serp_master.parquet"
+
+
 def save_results(records: list[SerpRecord], run_id: str):
-    # ── Raw JSON backup (always write, even if empty) ──────────────
+    # ── Raw JSON backup per run (audit trail, always written) ─────
     raw_path = DATA_RAW / f"serp_raw_{run_id}.json"
     with open(raw_path, "w", encoding="utf-8") as f:
         json.dump([r.to_dict() for r in records], f, ensure_ascii=False, indent=2)
     log.info(f"📦 Raw JSON  → {raw_path}")
 
-    if not records:  # ← guard
+    if not records:
         log.warning("⚠️  No records to save — skipping Parquet.")
         return pd.DataFrame()
 
-    df = pd.DataFrame([r.to_dict() for r in records])
-    df["timestamp_utc"] = pd.to_datetime(df["timestamp_utc"])
-    parquet_path = DATA_PROCESSED / f"serp_{run_id}.parquet"
-    df.to_parquet(parquet_path, index=False, engine="fastparquet")
-    log.info(f"🗂  Parquet   → {parquet_path}")
-    return df
+    new_df = pd.DataFrame([r.to_dict() for r in records])
+    new_df["timestamp_utc"] = pd.to_datetime(new_df["timestamp_utc"])
+
+    # ── Master Parquet: merge with existing data ───────────────────
+    if MASTER_PARQUET.exists():
+        existing = pd.read_parquet(MASTER_PARQUET, engine="fastparquet")
+        # align columns in case schema gained new fields since last run
+        combined = pd.concat([existing, new_df], ignore_index=True)
+    else:
+        combined = new_df
+
+    combined.to_parquet(MASTER_PARQUET, index=False, engine="fastparquet")
+    log.info(f"🗂  Master    → {MASTER_PARQUET}  ({len(combined)} total rows)")
+    return new_df
 
 
 # ── Resume helpers ────────────────────────────────────────────────────────────
@@ -303,7 +371,7 @@ def run_collection():
         )
 
     rows = load_queries()
-    log.info(f"Loaded {len(rows)} queries from {QUERIES_CSV}")
+    log.info(f"Loaded {len(rows)} queries from {QUERIES_REVIEWED_CSV}")
 
     current_topic = None
     for row in rows:
@@ -323,8 +391,16 @@ def run_collection():
 
         log.info(f"   [{stance}] {query}")
         try:
-            raw = fetch_serp(query)
-            record = extract_fields(raw, query, topic, subtopic, pro_leaning, stance)
+            raw, attempts = fetch_serp(query)
+            record = extract_fields(
+                raw,
+                query,
+                topic,
+                subtopic,
+                pro_leaning,
+                stance,
+                aio_fetch_attempts=attempts,
+            )
             if record is None:
                 log.error(f"   extract_fields returned None for '{query}'")
                 continue

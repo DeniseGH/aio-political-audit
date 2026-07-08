@@ -1,9 +1,9 @@
 """
 generate_queries.py  —  Step 2
 Reads subtopics_human_reviewed.csv and generates 18 search queries per subtopic:
-  6 pro  (supportive of the subtopic)
-  6 neutral (informational, no stance)
-  6 contra (critical of the subtopic)
+  8 pro  (supportive of the subtopic)
+  8 neutral (informational, no stance)
+  8 contra (critical of the subtopic)
 Output: data/raw/queries.csv
 """
 
@@ -27,11 +27,11 @@ if not ELM_API_KEY:
 
 
 def generate_queries(
-    topic: str, subtopic: str, stance: str, n: int = N_PER_STANCE
+    topic: str, subtopic: str, stance: str, reason: str, n: int = N_PER_STANCE
 ) -> list[str]:
     instruction = STANCE_INSTRUCTIONS[stance]
     prompt = QUERIES_PROMPT.format(
-        topic=topic, subtopic=subtopic, n=n, instruction=instruction
+        topic=topic, subtopic=subtopic, n=n, instruction=instruction, reason=reason
     )
     return [
         line.strip()
@@ -43,7 +43,10 @@ def generate_queries(
 def load_subtopics() -> list[dict]:
     if not SUBTOPICS_REVIEWED_CSV.exists():
         raise FileNotFoundError(
-            f"{SUBTOPICS_REVIEWED_CSV.name} not found at {SUBTOPICS_REVIEWED_CSV}"
+            f"subtopics_human_reviewed.csv not found at {SUBTOPICS_REVIEWED_CSV}.\n"
+            "It is necessary to review the LLM output before generating queries. "
+            "Please open queries/subtopics.csv, review the generated subtopics, "
+            "and rename the file to subtopics_human_reviewed.csv once done."
         )
     with open(SUBTOPICS_REVIEWED_CSV, newline="", encoding="utf-8-sig") as f:
         header = f.readline()
@@ -64,10 +67,17 @@ def main():
         pro_leaning = entry.get("pro_leaning", "")
         parties_pro = entry.get("parties_pro", "")
         cross_partisan = entry.get("cross-partisan", "")
+        reason = entry.get("reason", "")
+
+        if cross_partisan not in (None, "", "nan"):
+            print(
+                f"\n── {topic} / {subtopic} ── SKIPPED (cross-partisan = {cross_partisan!r})"
+            )
+            continue
 
         print(f"\n── {topic} / {subtopic} ──")
         for stance in STANCE_INSTRUCTIONS:
-            queries = generate_queries(topic, subtopic, stance)
+            queries = generate_queries(topic, subtopic, stance, reason)
             for q in queries:
                 print(f"  [{stance:>8}] {q}")
                 rows.append(
