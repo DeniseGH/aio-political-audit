@@ -78,12 +78,9 @@ Output: `data/raw/serp_raw_<timestamp>.json` + `data/processed/serp_<timestamp>.
 | Topic (Italian) | Topic (English) | Example subtopics |
 |---|---|---|
 | `droghe_leggere` | Soft drugs | cannabis legalisation, decriminalisation of possession |
-| `sicurezza_pubblica` | Public safety | urban banning orders (*daspo urbano*), CCTV, right to carry arms |
-| `gpa_utero_in_affitto` | Surrogacy | altruistic surrogacy (*GPA altruistica*), universal crime of surrogacy |
+| `diritti_lgbtq_gpa_utero_in_affitto` | LGBTQ+ rights & surrogacy | Same-sex couples and single LGBTQ+ individuals rights to adopt, gender identity at school, altruistic surrogacy (*GPA altruistica*), universal crime of surrogacy |
 | `aborto` | Abortion | conscientious objectors, RU486 pill |
-| `immigrazione` | Immigration | port closures, forced repatriation, security decrees |
-| `diritti_lgbtq` | LGBTQ+ rights | rainbow adoption, stepchild adoption, gender identity at school |
-| `cittadinanza` | Citizenship | *ius soli* (birthright), *ius scholae* (school-based citizenship), dual nationality |
+| `immigrazione` | Immigration | port closures, forced repatriation, security decrees, *ius soli* (birthright), *ius scholae* (school-based citizenship) |
 | `fine_vita` | End of life | legal euthanasia, assisted suicide, living wills |
 | `separazione delle carriere` | Separation of judicial careers | CSM (*Consiglio Superiore della Magistratura*) reform, separation of judges and prosecutors |
 | `premierato` | Prime-ministerialism | direct election of the Prime Minister, constitutional reform |
@@ -91,7 +88,7 @@ Output: `data/raw/serp_raw_<timestamp>.json` + `data/processed/serp_<timestamp>.
 | `armi_ucraina` | Arms to Ukraine | military support to Ukraine, Italian neutrality, conflict escalation |
 | `memoria_storica_antifascismo` | Historical memory / anti-fascism | April 25th commemorations, historical revisionism, fascism and anti-fascism |
 | `liberta_di_stampa_rai` | Press freedom / public broadcasting | RAI reform, public media, *par condicio* (equal media access), freedom of information |
-| `costo_della_vita_tasse` | Cost of living / taxation | flat tax, payroll tax wedge (*cuneo fiscale*), inflation, purchasing power |
+| `costo_della_vita_tasse` | Cost of living / taxation | flat tax, payroll tax wedge (*cuneo fiscale*), inflation, purchasing power,  dual nationality texes |
 | `fuga_dei_cervelli` | Brain drain | incentives for return educated Italian migrants |
 | `israele_palestina` | Israel-Palestine | recognition of Palestine, arms embargo on Israel, two-state solution |
 
