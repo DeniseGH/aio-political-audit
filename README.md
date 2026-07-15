@@ -105,7 +105,9 @@ subtopics_human_reviewed.csv
 │   ├── serpapi_collector.py       # Step 3: SerpAPI data collection + AIO extraction
 │   └── schema.py                  # SerpRecord dataclass (schema for collected records)
 ├── analysis/
-│   ├── aio_analysis.ipynb         # Main analysis notebook (AIO presence, overlap, UGC, domains)
+│   ├── aio_analysis_1_presence.ipynb   # Part 1: AIO presence, fetch attempts, consistency, AIO–organic overlap
+│   ├── aio_analysis_2_sources.ipynb    # Part 2: UGC sources, YouTube deep-dive, top cited domains, AIO content stats
+│   └── aio_analysis_3_entities.ipynb   # Part 3: entity-aware (canonical-source) AIO–organic overlap
 ├── queries/                       # Generated subtopics and queries (gitignored for the moment)
 │   ├── subtopics.csv
 │   ├── subtopics_human_reviewed.csv
@@ -161,8 +163,12 @@ Data collection supports **resume mode** — if a run is interrupted, re-running
 
 ### Run the analysis
 
+The analysis is split across three notebooks. Each one loads and cleans the raw data itself, so they can be run independently and in any order (Part 3 also rebuilds the YouTube channel resolution it needs from Part 2, via its own bootstrap cell, if run standalone):
+
 ```bash
-uv run jupyter notebook analysis/aio_analysis.ipynb
+uv run jupyter notebook analysis/aio_analysis_1_presence.ipynb
+uv run jupyter notebook analysis/aio_analysis_2_sources.ipynb
+uv run jupyter notebook analysis/aio_analysis_3_entities.ipynb
 ```
 
 ---
@@ -192,18 +198,32 @@ Each collected record (`SerpRecord`) contains:
 
 ---
 
-## Analysis Notebook (`analysis/aio_analysis.ipynb`) (WIP)
+## Analysis Notebooks (WIP)
 
-The notebook aims to load all collected `serp_raw_*.json` files and runs the following analyses:
+All three notebooks load the collected `serp_raw_*.json` files themselves, fold minor topic/subtopic recodes (e.g. `cittadinanza` → `immigrazione`/`costo_della_vita_tasse`), and translate `topic` / `stance` (`pro`/`neutrale`/`contro` → `Pro`/`Neutral`/`Con`) / `pro_leaning` (`sinistra`/`destra` → `Left`/`Right`) to English for all plots.
 
+### Part 1 — `analysis/aio_analysis_1_presence.ipynb`
+
+0. **Query counts** — total records, unique queries, breakdown by stance / leaning / leaning×stance
 1. **AIO presence per topic** — how often AIO appears for each macro topic
-2. **AIO presence per stance** — whether `pro` / `neutrale` / `contro` queries trigger AIO at different rates
+   - **1b. AIO fetch attempts** — share of queries where AIO appeared on the first SerpAPI request, on a retry, or never (after the collector's max 2 attempts)
+2. **AIO presence per stance** — whether `Pro` / `Neutral` / `Con` queries trigger AIO at different rates
+   - **2b.** by political leaning × stance (heatmap)
+   - **2c.** neutral vs. polarized (`Pro`/`Con` averaged) × leaning
 3. **Consistency** — for queries collected more than once, did AIO appear consistently?
-4. **AIO presence per subtopic** — granular breakdown within each topic
-5. **AIO–Organic Overlap** — share of AIO-cited domains also appearing in the organic top-10, by topic, subtopic, stance, and their combination
-6. **UGC Sources** — how often user-generated content platforms (YouTube, Reddit, Twitter/X, etc.) appear in AIO vs organic, including a YouTube channel deep-dive via the YouTube Data API v3
+4. **AIO presence per subtopic** — granular breakdown within each topic, by leaning and stance
+5. **AIO–Organic Overlap** — share of AIO-cited domains also appearing in the organic top-10, sliced by topic, subtopic, stance, leaning, and their combinations; plus a Jaccard-similarity analysis of AIO-cited sources across `Pro`/`Neutral`/`Con` phrasings of the same subtopic
+
+### Part 2 — `analysis/aio_analysis_2_sources.ipynb`
+
+6. **UGC Sources** — how often user-generated content platforms (YouTube, Reddit, Twitter/X, etc.) appear in AIO vs organic
+   - **6e.** YouTube channel deep-dive (channel vs video citations) via the YouTube Data API v3
 7. **Top Cited Domains** — raw and deduplicated citation counts, rank comparison between AIO and organic, per-topic heatmaps
-8. **AIO Content Stats** — source count, text length (chars and words) distributions, broken down by topic and stance
+8. **AIO Content Stats** — source count, text length (chars and words) distributions, broken down by topic, stance, and leaning
+
+### Part 3 — `analysis/aio_analysis_3_entities.ipynb`
+
+9. **Entity-Aware AIO–Organic Overlap** — the domain-string-based overlap metric misses same-source citations across formats (e.g. a YouTube channel cited in AIO vs. the same outlet's website ranking organically) and can produce spurious matches (any two unrelated `youtube.com` links "matching"). This section resolves AIO and organic citations to a canonical media entity (via a hand-curated `ENTITY_MAP`) and recomputes overlap at the entity level, comparing it against the original domain-level metric by topic and stance.
 
 
 ---
@@ -227,7 +247,7 @@ uv run pre-commit run --all-files
 | Query generation — pro / neutrale / contro (LLM) | ✅ Working |
 | Data collection via SerpAPI (with resume mode) | ✅ Working |
 | AIO extraction + two-stage retry logic | ✅ Working |
-| Analysis notebook (AIO presence, overlap, UGC, domains) | 🔄 In progress (3 topics collected so far) |
+| Analysis notebooks (presence, sources, entity-aware overlap) | 🔄 In progress (3 topics collected so far) |
 | Estimate of the CO₂ impact of this project | 🔄 In progress
 
 ---
