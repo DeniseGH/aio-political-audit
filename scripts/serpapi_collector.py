@@ -94,21 +94,27 @@ def fetch_serp(
         # ── Case 3: AIO shell with empty blocks — retry ───────────
         if ai_overview:
             block_types = [b.get("type") for b in text_blocks]
-            wait = 30 * (attempt + 1)
+            is_last = attempt == retries - 1
             log.warning(
-                f"   AIO shell empty (block types: {block_types}) — "
-                f"waiting {wait}s before retry ({attempt + 1}/{retries})..."
+                f"   AIO shell empty (block types: {block_types}) — attempt {attempt + 1}/{retries}"
+                + (
+                    ""
+                    if is_last
+                    else f" — waiting {30 * (attempt + 1)}s before retry..."
+                )
             )
-            time.sleep(wait)
+            if not is_last:
+                time.sleep(30 * (attempt + 1))
             continue
 
         # ── Case 4: no ai_overview key at all — retry with short wait
-        wait = 15 * (attempt + 1)
+        is_last = attempt == retries - 1
         log.warning(
-            f"   No AIO in response (attempt {attempt + 1}/{retries}) — "
-            f"waiting {wait}s before retry..."
+            f"   No AIO in response (attempt {attempt + 1}/{retries})"
+            + ("" if is_last else f" — waiting {15 * (attempt + 1)}s before retry...")
         )
-        time.sleep(wait)
+        if not is_last:
+            time.sleep(15 * (attempt + 1))
 
     log.warning(f"   AIO absent after {retries} attempts — recording as no AIO")
     return last_raw, retries

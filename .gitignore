@@ -157,9 +157,8 @@ ENV/
 env.bak/
 venv.bak/
 
-# Data # TODO: Remove notebooks and analysis line/folder before submission
+# Data # TODO: Remove analysis line/folder before submission
 data/
-notebooks/
 queries/archive
 analysis/
 
