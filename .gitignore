@@ -157,10 +157,12 @@ ENV/
 env.bak/
 venv.bak/
 
-# Data # TODO: Remove analysis line/folder before submission
+# Data
 data/
 queries/archive
-analysis/
+analysis/archive/
+analysis/figures/
+analysis/__pycache__/
 
 # Spyder project settings
 .spyderproject

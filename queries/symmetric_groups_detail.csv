@@ -1,0 +1,83 @@
+group_id;subtopic;pro_row_id;pro_query;contro_row_id;contro_query;pro_contro_similarity;neutrale_row_id;neutrale_query;pro_neutrale_similarity;contro_neutrale_similarity
+SYM_0001;GPA altruistica;174;perché la gpa altruistica è eticamente giusta;184;perché la gpa altruistica è pericolosa;0.769;;;;
+SYM_0002;aborto farmacologico in ospedale;336;aborto farmacologico in ospedale vantaggi;356;controindicazioni dell'aborto farmacologico in ospedale;0.727;;;;
+SYM_0003;aborto farmacologico in ospedale;337;perché l'aborto farmacologico in ospedale è sicuro;352;perché l'aborto farmacologico in ospedale è pericoloso;0.875;;;;
+SYM_0004;aborto farmacologico in ospedale;337;perché l'aborto farmacologico in ospedale è sicuro;355;perché l'aborto farmacologico in ospedale è meno sicuro;0.941;;;;
+SYM_0005;aborto farmacologico in ospedale;337;perché l'aborto farmacologico in ospedale è sicuro;357;l'aborto farmacologico in ospedale è eticamente sbagliato;0.75;;;;
+SYM_0006;accesso gratuito ai servizi di aborto;456;perché l'aborto dovrebbe essere accessibile gratuitamente;472;perché l'aborto non dovrebbe essere gratuito;0.714;;;;
+SYM_0007;accoglienza diffusa;552;vantaggi dell'accoglienza diffusa in italia;568;problemi dell'accoglienza diffusa in Italia;0.833;;;;
+SYM_0008;adozione arcobaleno;625;perché le famiglie arcobaleno dovrebbero poter adottare;642;perché le famiglie arcobaleno non dovrebbero adottare;0.857;;;;
+SYM_0009;assegno di inclusione;1704;assegno di inclusione aiuta chi ha davvero bisogno;1724;l'assegno di inclusione discrimina chi ha veramente bisogno;0.706;;;;
+SYM_0010;assegno di inclusione;1705;vantaggi assegno di inclusione rispetto al reddito di cittadinanza;1721;difetti dell'assegno di inclusione rispetto al reddito di cittadinanza;0.842;;;;
+SYM_0011;assegno di inclusione;1706;come l'assegno di inclusione sostiene le famiglie italiane;1722;come l'assegno di inclusione penalizza le famiglie povere;0.778;;;;
+SYM_0012;aumento delle spese per la difesa;1397;perché la destra sostiene più soldi per la difesa;1412;perché la destra vuole più spese per la difesa;0.778;;;;
+SYM_0013;autonomia delle procure;1228;importanza dell'autonomia delle procure in democrazia;1241;rischi dell'autonomia delle procure in italia;0.714;1237.0;storia dell'autonomia delle procure in Italia;0.714;0.857
+SYM_0014;autonomia delle procure;1229;come l'autonomia delle procure protegge la giustizia;1243;come l'autonomia delle procure danneggia la giustizia;0.875;;;;
+SYM_0015;bassi salari di ingresso per i giovani;1776;perché i giovani italiani emigrano per lavoro;1792;perché i giovani italiani emigrano davvero;0.769;;;;
+SYM_0016;cittadinanza per meriti speciali;939;perché sostenere la cittadinanza per meriti è giusto;952;perché la cittadinanza per meriti speciali è ingiusta;0.75;;;;
+SYM_0017;controllo politico sulla magistratura;1249;vantaggi del controllo politico sulla magistratura;1265;rischi del controllo politico sulla magistratura;0.833;;;;
+SYM_0018;correntismo giudiziario;1176;correntismo giudiziario perché è un problema;1192;perché il correntismo giudiziario non è un problema;0.714;;;;
+SYM_0019;correntismo giudiziario;1179;correntismo e politicizzazione della giustizia;1197;correntismo toghe e politicizzazione della magistratura;0.727;;;;
+SYM_0020;correntismo giudiziario;1183;correntismo giudiziario è un problema;1192;perché il correntismo giudiziario non è un problema;0.769;;;;
+SYM_0021;depenalizzazione possesso;31;impatti sociali positivi della depenalizzazione del possesso di droghe leggere;44;effetti della depenalizzazione del possesso di droghe leggere sulla società;0.7;38.0;effetti della depenalizzazione del possesso di droghe leggere;0.778;0.889
+SYM_0022;educazione all'identità di genere a scuola;703;educazione identità di genere e inclusione sociale nelle scuole;713;contro educazione identità di genere nelle scuole;0.75;;;;
+SYM_0023;educazione sessuale nelle scuole;388;perché l'educazione sessuale è essenziale nelle scuole;400;perché l'educazione sessuale nelle scuole è sbagliata;0.75;;;;
+SYM_0024;embargo e stop alla vendita di armi a Israele;1921;vantaggi di fermare la vendita di armi a Israele;1936;perché è sbagliato fermare la vendita di armi a israele;0.737;;;;
+SYM_0025;embargo e stop alla vendita di armi a Israele;1922;perché la sinistra ha ragione sull'embargo delle armi a Israele;1939;perché la sinistra sbaglia sull'embargo armi a israele;0.8;;;;
+SYM_0026;embargo e stop alla vendita di armi a Israele;1926;perché la destra sbaglia su armi a Israele;1939;perché la sinistra sbaglia sull'embargo armi a israele;0.706;;;;
+SYM_0027;equidistanza tra fascismo e antifascismo;1465;perché equidistanza tra fascismo e antifascismo è giusta;1480;perché l'equidistanza tra fascismo e antifascismo è pericolosa;0.824;;;;
+SYM_0028;equidistanza tra fascismo e antifascismo;1465;perché equidistanza tra fascismo e antifascismo è giusta;1483;equidistanza tra fascismo e antifascismo perché è sbagliata;0.75;1472.0;equidistanza tra fascismo e antifascismo significato;0.714;0.714
+SYM_0029;equidistanza tra fascismo e antifascismo;1466;motivi per equidistanza tra fascismo e antifascismo;1481;rischi dell'equidistanza tra fascismo e antifascismo;0.714;1472.0;equidistanza tra fascismo e antifascismo significato;0.769;0.769
+SYM_0030;equidistanza tra fascismo e antifascismo;1466;motivi per equidistanza tra fascismo e antifascismo;1485;critiche all'equidistanza tra fascismo e antifascismo;0.714;1472.0;equidistanza tra fascismo e antifascismo significato;0.769;0.769
+SYM_0031;equidistanza tra fascismo e antifascismo;1467;equidistanza tra fascismo e antifascismo è oggettiva;1480;perché l'equidistanza tra fascismo e antifascismo è pericolosa;0.75;;;;
+SYM_0032;equidistanza tra fascismo e antifascismo;1467;equidistanza tra fascismo e antifascismo è oggettiva;1481;rischi dell'equidistanza tra fascismo e antifascismo;0.714;1472.0;equidistanza tra fascismo e antifascismo significato;0.769;0.769
+SYM_0033;equidistanza tra fascismo e antifascismo;1467;equidistanza tra fascismo e antifascismo è oggettiva;1483;equidistanza tra fascismo e antifascismo perché è sbagliata;0.8;1472.0;equidistanza tra fascismo e antifascismo significato;0.769;0.714
+SYM_0034;equidistanza tra fascismo e antifascismo;1467;equidistanza tra fascismo e antifascismo è oggettiva;1485;critiche all'equidistanza tra fascismo e antifascismo;0.714;1472.0;equidistanza tra fascismo e antifascismo significato;0.769;0.769
+SYM_0035;finanziamenti privati per il nucleare;1298;benefici degli investimenti privati nel nucleare;1319;conseguenze negative degli investimenti privati nel nucleare;0.769;;;;
+SYM_0036;finanziamento dei consultori familiari;408;importanza del finanziamento pubblico ai consultori familiari;427;effetti negativi del finanziamento pubblico ai consultori familiari;0.8;;;;
+SYM_0037;flat tax per autonomi e partite IVA;1613;perché la flat tax è equa per lavoratori autonomi;1630;perché la flat tax non è equa;0.75;;;;
+SYM_0038;incentivi fiscali per il rientro dei cervelli;1729;come gli incentivi fiscali aiutano a far tornare i cervelli;1749;motivi contro gli incentivi fiscali per far tornare i cervelli;0.7;;;;
+SYM_0039;incentivi fiscali per il rientro dei cervelli;1730;perché gli incentivi fiscali per i cervelli sono giusti;1747;perché gli incentivi fiscali per rientro cervelli sono ingiusti;0.778;;;;
+SYM_0040;incentivi fiscali per il rientro dei cervelli;1735;perché gli incentivi fiscali per il rientro dei cervelli sono efficaci;1744;perché gli incentivi fiscali per rientro cervelli non funzionano;0.7;;;;
+SYM_0041;incentivi fiscali per il rientro dei cervelli;1735;perché gli incentivi fiscali per il rientro dei cervelli sono efficaci;1747;perché gli incentivi fiscali per rientro cervelli sono ingiusti;0.8;;;;
+SYM_0042;indipendenza della magistratura;1152;perché l'indipendenza della magistratura è fondamentale in italia;1168;perché l'indipendenza della magistratura è pericolosa;0.75;;;;
+SYM_0043;investimenti pubblici in ricerca e università;1807;perché la sinistra ha ragione sugli investimenti in ricerca e università;1818;perché la sinistra sbaglia sugli investimenti in ricerca;0.737;;;;
+SYM_0044;ius culturae;816;vantaggi ius culturae in Italia;838;critiche allo ius culturae in Italia;0.727;;;;
+SYM_0045;ius culturae;817;perché lo ius culturae è importante;832;perché lo ius culturae è sbagliato;0.833;;;;
+SYM_0046;ius soli;792;vantaggi ius soli in italia;809;criticità dello ius soli in Italia;0.727;804.0;storia dello ius soli in italia;0.727;0.833
+SYM_0047;legge contro l'omofobia;769;vantaggi del ddl zan contro l'omofobia;785;criticità del ddl Zan contro l'omofobia;0.857;;;;
+SYM_0048;legge contro l'omofobia;772;perché il ddl zan è necessario in italia;784;perché il ddl Zan è pericoloso;0.714;;;;
+SYM_0049;linea negoziale e diplomatica immediata;1416;vantaggi del cessate il fuoco immediato in ucraina;1435;pericoli di un cessate il fuoco immediato in ucraina;0.706;;;;
+SYM_0050;mantenimento della fiamma tricolore nel simbolo di partito;1517;perché la fiamma tricolore è un simbolo di continuità storica;1528;perché la fiamma tricolore è un simbolo fascista;0.778;;;;
+SYM_0051;maternità surrogata commerciale;221;perché sostenere la maternità surrogata commerciale;239;perché la maternità surrogata commerciale è immorale;0.769;;;;
+SYM_0052;neutralità dell'Italia nel conflitto;1440;perché l'Italia dovrebbe rimanere neutrale nel conflitto ucraina;1456;perché l'Italia non dovrebbe restare neutrale nel conflitto ucraino;0.737;;;;
+SYM_0053;nucleare e sovranità energetica;1320;vantaggi del nucleare per l'indipendenza energetica italiana;1337;rischi del nucleare per l'indipendenza energetica;0.8;;;;
+SYM_0054;nucleare e sovranità energetica;1321;perché il nucleare garantisce sovranità energetica;1336;perché il nucleare non garantisce sovranità energetica;0.923;;;;
+SYM_0055;nucleare e sovranità energetica;1327;perché il nucleare è cruciale per l'indipendenza energetica nazionale;1341;perché il nucleare non è la soluzione per l'indipendenza;0.7;;;;
+SYM_0056;reato universale GPA;197;come il reato universale di gpa protegge i diritti dei bambini;213;come il reato universale di gpa viola i diritti umani;0.762;;;;
+SYM_0057;restrizione della cittadinanza per matrimonio;864;perché è giusto limitare la cittadinanza per matrimonio;880;perché limitare la cittadinanza per matrimonio è sbagliato;0.75;;;;
+SYM_0058;revoca cittadinanza per reati gravi;916;sostegno revoca cittadinanza per reati gravi;934;alternative alla revoca della cittadinanza per reati gravi;0.714;920.0;revoca cittadinanza italiana per reati gravi;0.833;0.714
+SYM_0059;riconoscimento costituzionale della matrice antifascista;1561;perché la Costituzione italiana nasce antifascista;1576;perché la costituzione italiana non è solo antifascista;0.714;1571.0;perché la costituzione italiana è considerata antifascista;0.769;0.8
+SYM_0060;riconoscimento costituzionale della matrice antifascista;1564;perché la sinistra difende l'antifascismo costituzionale;1579;perché la sinistra esagera con l'antifascismo costituzionale;0.8;;;;
+SYM_0061;riduzione dell'IRPEF per i redditi alti;1656;vantaggi riduzione IRPEF per redditi alti;1673;svantaggi della riduzione IRPEF per i redditi alti;0.714;;;;
+SYM_0062;riforma del processo penale;1277;effetti positivi della riforma Nordio sulla giustizia penale;1294;effetti della riforma Nordio sulla giustizia italiana;0.8;;;;
+SYM_0063;salario minimo legale;1632;vantaggi del salario minimo legale in italia;1649;controindicazioni del salario minimo legale in italia;0.857;1640.0;salario minimo legale in italia cos'è;0.714;0.714
+SYM_0064;scioglimento delle organizzazioni neofasciste;1538;vantaggi dello scioglimento delle organizzazioni neofasciste;1558;effetti negativi dello scioglimento delle organizzazioni neofasciste;0.769;;;;
+SYM_0065;solare ed eolico meglio del nucleare;1969;vantaggi delle rinnovabili rispetto al nucleare in italia;1985;limiti delle rinnovabili rispetto al nucleare;0.714;;;;
+SYM_0066;solare ed eolico meglio del nucleare;1971;come solare ed eolico possono sostituire il nucleare in italia;1984;perché solare ed eolico non possono sostituire il nucleare;0.737;;;;
+SYM_0067;sospensione dell'accordo di associazione UE-Israele e sanzioni;1944;perché sospendere accordo associazione UE Israele è giusto;1960;perché non sospendere accordo UE-Israele è giusto;0.875;;;;
+SYM_0068;sospensione dell'accordo di associazione UE-Israele e sanzioni;1950;perché la destra sbaglia a non sanzionare Israele;1964;perché la destra ha ragione a non sanzionare Israele;0.824;;;;
+SYM_0069;sostegno a Israele e diritto all'autodifesa;1901;perché la destra italiana supporta Israele;1915;perché la destra italiana appoggia Israele a prescindere;0.714;;;;
+SYM_0070;stepchild adoption;672;vantaggi stepchild adoption in Italia;695;fallimenti della stepchild adoption in Italia;0.727;684.0;storia della stepchild adoption in Italia;0.727;0.833
+SYM_0071;stepchild adoption;679;perché la stepchild adoption è un diritto umano;688;perché la stepchild adoption è sbagliata;0.714;;;;
+SYM_0072;stop alle forniture di armi;1368;perché fermare le armi in ucraina è giusto;1384;perché fermare le armi all'ucraina è un errore;0.706;;;;
+SYM_0073;suicidio assistito;984;perché il suicidio assistito è un diritto umano;1000;perché il suicidio assistito è sbagliato;0.714;;;;
+SYM_0074;tassazione doppia cittadinanza;888;vantaggi della tassazione sulla doppia cittadinanza;905;svantaggi della tassazione sulla doppia cittadinanza;0.833;;;;
+SYM_0075;tassazione doppia cittadinanza;889;perché limitare la doppia cittadinanza è giusto;907;perché limitare la doppia cittadinanza è una cattiva idea;0.75;;;;
+SYM_0076;tassazione doppia cittadinanza;891;doppia cittadinanza e giustizia fiscale in Italia;906;doppia cittadinanza e discriminazione fiscale in Italia;0.857;903.0;doppia cittadinanza e obblighi fiscali in italia;0.714;0.714
+SYM_0077;terapie di conversione;720;benefici delle terapie di conversione;738;effetti negativi delle terapie di conversione;0.727;729.0;storia delle terapie di conversione;0.8;0.727
+SYM_0078;terapie di conversione;726;perché le terapie di conversione sono utili;736;perché le terapie di conversione sono pericolose;0.857;;;;
+SYM_0079;terapie di conversione;726;perché le terapie di conversione sono utili;740;perché le terapie di conversione sono inefficaci;0.857;;;;
+SYM_0080;testamento biologico;1032;vantaggi del testamento biologico in italia;1050;criticità del testamento biologico in Italia;0.833;;;;
+SYM_0081;testamento biologico;1033;perché il testamento biologico è un diritto;1048;perché il testamento biologico è pericoloso;0.769;;;;
+SYM_0082;testamento biologico;1037;perché sostenere il testamento biologico;1048;perché il testamento biologico è pericoloso;0.727;;;;
