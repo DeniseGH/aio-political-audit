@@ -23,13 +23,14 @@ The pipeline (generate polarised queries → collect SERP/AIO data → analyse p
 
 | What you want to change | Where |
 |---|---|
-| **Country / search locale** | `SEARCH_LANG` / `SEARCH_COUNTRY` (`hl`, `gl`) in `config.py` — currently `"it"` / `"it"` |
+| **Country / search locale** | `SEARCH_LANG` / `SEARCH_COUNTRY` (`hl`, `gl`) in `config.py` — currently `"it"` / `"it"`. Also drives the relative-date parsing (`parse_date()` in `scripts/serpapi_collector.py`, via `dateparser`) |
 | **Language of generated queries & prompts** | `SUBTOPICS_PROMPT`, `QUERIES_PROMPT`, `STANCE_INSTRUCTIONS` in `config.py` — all written in Italian, including the example queries inside the prompts (LLMs follow the language of the examples closely) |
 | **Topics & subtopics to audit** | `TOPIC_HINTS` in `config.py` — one entry per macro topic, with a few example subtopics as a steering hint for Step 1 |
 | **How many queries per subtopic/stance** | `N_PER_STANCE` in `config.py` (currently 8 → 24 queries per subtopic: pro/neutral/contro) |
 | **The pro/con political axis itself** | `POLITICAL_LEANINGS` in `config.py` — a binary `("destra", "sinistra")` (right/left) pair by default, used both in `generate_subtopics.py`'s validation and to fill in the prompt text. A multi-party or non-left/right system would need this generalised to an arbitrary label set |
 | **LLM backend** | `call_llm()` in `config.py` uses the `openai` Python SDK with `LLM_MODEL = "gpt-4o"` and `ELM_API_KEY` — swap the model name/key, or add a `base_url` for a different OpenAI-compatible endpoint |
 | **Language of the analysis output (plots, labels)** | `analysis/common.py`: `STANCE_TRANSLATIONS`, `LEANING_TRANSLATIONS`, `TOPIC_TRANSLATIONS` map the collected Italian codes to the English labels used in every plot. The analysis logic itself (Jaccard overlap, domain extraction, UGC detection, etc.) operates on domains and structured fields, not on query text, so it's language-agnostic downstream of these three dictionaries |
+| **Known media outlets / entities (for entity-aware overlap)** | `analysis/common.py`: `ENTITY_MAP` + `resolve_entity()` — maps Italian domains and YouTube channel names (RAI, La7, ANSA, etc.) to a canonical entity for the §9 entity-aware overlap metric in `aio_analysis_3_entities.ipynb`. Needs to be rewritten entirely for a different country's media landscape. A smaller, cosmetic counterpart, `CHANNEL_CATEGORIES` in `aio_analysis_2_sources.ipynb` (§6e "Top channels cited" chart), color-codes a handful of known Italian channels by type and would need the same treatment |
 | **Scale** | The only hard constraints are SerpAPI/LLM rate limits and cost — the collector's resume mode (see Step 3 below) makes it safe to run in batches over multiple sessions regardless of how many topics/queries you configure |
 
 Everything downstream of `data/raw/serp_raw_*.json` (the analysis notebooks) reads the same schema regardless of country/language — see [Data Collection Schema](#data-collection-schema).
@@ -92,7 +93,7 @@ As of writing, `queries/queries_human_reviewed.csv` contains 2,017 reviewed quer
 Two extra query sets sit alongside the main reviewed CSV, used only by specific analysis cells rather than by the core pipeline:
 
 - **`queries/human_short_queries.csv`** (204 queries) — hand-written short, colloquial phrasings (as opposed to the longer LLM-generated ones), collected into a separate `data/raw_test/` batch and sanity-checked in `analysis/aio_analysis_test.ipynb`, to check whether AIO presence/behaviour is sensitive to query length/style rather than just topic/stance.
-- **`queries/symmetric_groups_detail.csv`** (82 groups) — pairs (and sometimes triples with a neutral query) of near-word-for-word-identical queries within the same subtopic that differ only in pro/contro (/neutral) framing, e.g. *"perché l'aborto dovrebbe essere accessibile gratuitamente"* vs. *"perché l'aborto non dovrebbe essere gratuito"*. This is the input to the matched-pair source-overlap analysis in `aio_analysis_1_presence.ipynb` (§5m–5o) — a tighter test of framing sensitivity than pooling all `pro`/`contro` queries in a subtopic, since here the wording is held constant and only the polarity changes. **Note:** the script that mined these matched pairs out of `queries_human_reviewed.csv` isn't currently checked into the repo — treat the CSV as a hand-curated artifact for now if you're reproducing this from scratch.
+- **`queries/symmetric_groups_detail.csv`** (82 groups) — pairs (and sometimes triples with a neutral query) of near-word-for-word-identical queries within the same subtopic that differ only in pro/contro (/neutral) framing, e.g. *"perché l'aborto dovrebbe essere accessibile gratuitamente"* vs. *"perché l'aborto non dovrebbe essere gratuito"*. This is the input to the matched-pair source-overlap analysis in `aio_analysis_1_presence.ipynb` (§5m–5o) — a tighter test of framing sensitivity than pooling all `pro`/`contro` queries in a subtopic, since here the wording is held constant and only the polarity changes. **Note:** treat `queries_human_reviewed.csv` as a hand-curated artifact if you're reproducing this from scratch.
 
 ### Step 3 — Data collection (`scripts/serpapi_collector.py`)
 
@@ -108,7 +109,7 @@ Output:
 
 ## Topics
 
-17 macro topics configured in `config.py` (`TOPIC_HINTS`), highly polarizing in the Italian political debate. 12 have gone through subtopic generation + human review + query_generation (e.g., `diritti_lgbtq` and `gpa_utero_in_affitto` were merged into one topic during review)
+15 macro topics configured in `config.py` (`TOPIC_HINTS`), highly polarizing in the Italian political debate. 12 have gone through subtopic generation + human review + query_generation (e.g., `diritti_lgbtq` and `gpa_utero_in_affitto` were merged into one topic during review)
 
 | Topic (Italian) | Topic (English) | Example subtopics |
 |---|---|---|
@@ -116,18 +117,14 @@ Output:
 | `diritti_lgbtq_gpa_utero_in_affitto` | LGBTQ+ rights & surrogacy | same-sex adoption, civil unions/marriage, gender identity education at school, altruistic surrogacy (*GPA altruistica*), universal crime of surrogacy |
 | `aborto` | Abortion | conscientious objection, pharmacological abortion in hospital, stricter gestational limits, family counselling centre funding |
 | `immigrazione` | Immigration | port closures & border control, *ius scholae* (school-based citizenship), forced repatriation, security decrees |
-| `cittadinanza` | Citizenship | *ius soli* / *ius culturae* (birthright), naturalisation criteria, dual-citizenship taxation, revocation for serious crimes |
 | `fine_vita` | End of life | legal euthanasia, assisted suicide, mandatory palliative care, living wills |
 | `separazione delle carriere` | Separation of judicial careers | judges/prosecutors career split, CSM independence, judicial "correntismo", magistrates' civil liability |
 | `energia_nucleare` | Nuclear energy | nuclear as a climate solution, energy sovereignty, private financing, solar/wind vs. nuclear |
 | `armi_ucraina` | Arms to Ukraine | arms shipments to Ukraine, ReArm EU plan, NATO alignment, Italian neutrality, negotiated ceasefire |
 | `memoria_storica_antifascismo` | Historical memory / anti-fascism | April 25th commemorations, historical revisionism, *fiamma tricolore* party symbol, foibe massacres |
-| `liberta_di_stampa_rai` | Press freedom / public broadcasting | *(planned — subtopics not yet generated)* RAI reform, public media, *par condicio* (equal media access), freedom of information |
 | `costo_della_vita_tasse` | Cost of living / taxation | flat tax for the self-employed, payroll tax wedge (*cuneo fiscale*), minimum wage, top-bracket IRPEF cuts |
 | `fuga_dei_cervelli` | Brain drain | tax incentives for returning talent, youth job precarity, entry-level wages, public research investment |
 | `israele_palestina` | Israel-Palestine | recognition of Palestine, Israel's right to self-defence, arms embargo, "two peoples, two states", EU-Israel association agreement |
-
-Two more raw collection topics get recoded or discarded during analysis (see `analysis/common.py::load_data`, and the [Analysis Notebooks](#analysis-notebooks-wip) note below): `cittadinanza` splits into `costo_della_vita_tasse` (its "dual-citizenship taxation" subtopic) and `immigrazione` (everything else); `sicurezza_pubblica` folds its 3 immigration-adjacent subtopics into `immigrazione` and discards the rest (e.g. detainee rights, policing funding — out of scope for this audit). This leaves **12 topics** in the analysis-ready data.
 
 ---
 
@@ -146,12 +143,6 @@ aio-political-audit/
 │   ├── aio_analysis_2_sources.ipynb     # Part 2: UGC sources, YouTube deep-dive, top cited domains, AIO content stats
 │   ├── aio_analysis_3_entities.ipynb    # Part 3: entity-aware (canonical-source) AIO–organic overlap
 │   ├── aio_analysis_test.ipynb          # Sanity-check for the human_short_queries.csv pilot batch
-│   ├── figures/                         # Output figures (PDF), written by the analysis notebooks
-│   └── archive/                         # Superseded exploration scripts/notebooks, incl. source_network_analysis.ipynb
-│       ├── source_network_analysis.ipynb      # Bipartite/projected source co-citation network analysis (on hold)
-│       ├── labelling_sources.py               # Superseded manual YouTube-channel labelling workflow
-│       ├── channels_to_label.csv / channels_labeled.csv  # ...its inputs/outputs — Part 2 now resolves channels live via the YouTube API instead
-│       └── news_media_bias_and_factuality_dataexploration.ipynb
 ├── queries/                       # Generated subtopics and queries (gitignored for the moment)
 │   ├── subtopics.csv                    # Step 1 output (LLM-only, unreviewed)
 │   ├── subtopics_human_reviewed.csv     # Step 1b output — tracked in git despite the folder being gitignored
@@ -164,7 +155,6 @@ aio-political-audit/
 │   ├── processed/                 # serp_master.parquet, cumulative across all runs (gitignored)
 │   ├── raw_test/ / processed_test/  # Same, for the human_short_queries.csv pilot batch (gitignored)
 │   └── archive/                   # Older/superseded collection outputs (gitignored)
-├── results/                       # Reserved for output figures/tables (currently unused — see analysis/figures/)
 ├── logs/                          # Collection logs (serpapi_collection.log)
 ├── config.py                      # Topics, prompts, paths, API key loading, LLM helper — main adaptation surface, see above
 ├── main.py                        # Entry point (placeholder)
@@ -172,8 +162,6 @@ aio-political-audit/
 ├── .pre-commit-config.yaml        # Pre-commit hooks (ruff, detect-secrets)
 └── .python-version                # Python 3.13
 ```
-
-> Note: `analysis/`, `data/`, and most of `queries/` are gitignored for now (see `.gitignore`); only the two `*_human_reviewed.csv` files are force-tracked. The notebooks, figures, and collected data therefore only exist locally / are shared outside git until that's revisited before submission.
 
 ---
 
@@ -259,7 +247,7 @@ Each collected record (`SerpRecord`) contains:
 
 ---
 
-## Analysis Notebooks (WIP)
+## Analysis Notebooks
 
 All notebooks load the collected `serp_raw_*.json` files themselves via `analysis/common.py::load_data()`, which folds minor topic/subtopic recodes (`cittadinanza` → `immigrazione`/`costo_della_vita_tasse`; `sicurezza_pubblica` → partly `immigrazione`, partly discarded — see [Topics](#topics)), and translates `topic` / `stance` (`pro`/`neutrale`/`contro` → `Pro`/`Neutral`/`Con`) / `pro_leaning` (`sinistra`/`destra` → `Left`/`Right`) to English for all plots.
 
@@ -311,7 +299,7 @@ uv run pre-commit run --all-files
 | Query generation — pro / neutrale / contro (LLM) | ✅ Working — 14/17 topics through Step 2b (2,017 queries reviewed) |
 | Data collection via SerpAPI (with resume mode) | ✅ Complete — all 2,017 reviewed queries collected across all 14 reviewed topics |
 | AIO extraction + two-stage retry logic | ✅ Working (known edge case: empty-content AIO shells, see Step 3 above) |
-| Analysis notebooks (presence, framing sensitivity, sources, entity-aware overlap) | 🔄 In progress |
+| Analysis notebooks (presence, framing sensitivity, sources, entity-aware overlap) | ✅ Working |
 
 ---
 

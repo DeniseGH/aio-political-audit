@@ -54,6 +54,139 @@ TOPIC_TRANSLATIONS = {
     "separazione delle carriere": "Judicial Reform Referendum",
 }
 
+# Canonical entity map for §9 entity-aware overlap (aio_analysis_3_entities.ipynb).
+# Keys are lowercase domain names OR lowercase YouTube channel names.
+# Values are the canonical entity name used in the overlap calculation.
+# Extend this dict whenever you add new data; rewrite entirely for a different
+# country's media landscape.
+ENTITY_MAP = {
+    # ── La7 ──────────────────────────────────────────────────────────────
+    "la7.it": "La7",
+    "la7 attualità": "La7",
+    "la7attualità": "La7",
+    "tg la7": "La7",
+    "tg la7 attualità": "La7",
+    "la7": "La7",
+    # ── Il Fatto Quotidiano ───────────────────────────────────────────────
+    "ilfattoquotidiano.it": "Il Fatto Quotidiano",
+    "il fatto quotidiano": "Il Fatto Quotidiano",
+    "fatto quotidiano": "Il Fatto Quotidiano",
+    # ── RAI ──────────────────────────────────────────────────────────────
+    "rai.it": "RAI",
+    "rainews.it": "RAI",
+    "rainews": "RAI",
+    "rai news": "RAI",
+    "rai news 24": "RAI",
+    "rai": "RAI",
+    # ── Il Sole 24 ORE ────────────────────────────────────────────────────
+    "ilsole24ore.com": "Il Sole 24 ORE",
+    "il sole 24 ore": "Il Sole 24 ORE",
+    "sole 24 ore": "Il Sole 24 ORE",
+    # ── Altalex ──────────────────────────────────────────────────────────
+    "altalex.com": "Altalex",
+    "altalex news": "Altalex",
+    "altalex": "Altalex",
+    # ── Sky TG24 ─────────────────────────────────────────────────────────
+    "tg24.sky.it": "Sky TG24",
+    "sky tg24": "Sky TG24",
+    "skytg24": "Sky TG24",
+    # ── L'Espresso ───────────────────────────────────────────────────────
+    "lespresso.it": "L'Espresso",
+    "l'espresso": "L'Espresso",
+    "espresso": "L'Espresso",
+    # ── Vatican News ─────────────────────────────────────────────────────
+    "vaticannews.va": "Vatican News",
+    "vatican news - italiano": "Vatican News",
+    "vatican news": "Vatican News",
+    # ── Euronews ─────────────────────────────────────────────────────────
+    "it.euronews.com": "Euronews",
+    "euronews.com": "Euronews",
+    "euronews (in italiano)": "Euronews",
+    "euronews italiano": "Euronews",
+    # ── Avvenire ─────────────────────────────────────────────────────────
+    "avvenire.it": "Avvenire",
+    "avvenire": "Avvenire",
+    # ── ANSA ─────────────────────────────────────────────────────────────
+    "ansa.it": "ANSA",
+    "ansa": "ANSA",
+    "agensir": "ANSA",  # both are wire agencies
+    # ── Wikipedia ────────────────────────────────────────────────────────
+    "wikipedia.org": "Wikipedia",
+    # ── la Repubblica ────────────────────────────────────────────────────
+    "repubblica.it": "la Repubblica",
+    "la repubblica": "la Repubblica",
+    # ── Corriere della Sera ───────────────────────────────────────────────
+    "corriere.it": "Corriere della Sera",
+    "corriere della sera": "Corriere della Sera",
+    # ── Fanpage.it ───────────────────────────────────────────────────────
+    "fanpage.it": "Fanpage.it",
+    # ── TV2000 ───────────────────────────────────────────────────────────
+    "tv2000.it": "TV2000",
+    "tv2000it": "TV2000",
+    "tg2000": "TV2000",
+    # ── Fondazione Umberto Veronesi ──────────────────────────────────────
+    "fondazioneveronesi.it": "Fondazione Umberto Veronesi",
+    "fondazione veronesi": "Fondazione Umberto Veronesi",
+    # ── Avvocato Cittadinanza ────────────────────────────────────────────
+    "avvocatocittadinanza.it": "Avvocato Cittadinanza",
+    "avvocato cittadinanza": "Avvocato Cittadinanza",
+    # ── ISPI ─────────────────────────────────────────────────────────────
+    "ispionline.it": "ISPI",
+    "ispi - la geopolitica spiegata in modo chiaro": "ISPI",
+    # ── Confindustria ────────────────────────────────────────────────────
+    "confindustria.it": "Confindustria",
+    "confindustria": "Confindustria",
+    # ── Corte Costituzionale ─────────────────────────────────────────────
+    "cortecostituzionale.it": "Corte Costituzionale",
+    "corte costituzionale": "Corte Costituzionale",
+    # ── Garante nazionale privati libertà ────────────────────────────────
+    "garantenazionaleprivatiliberta.it": "Garante nazionale privati libertà",
+    "garante nazionale privati libertà": "Garante nazionale privati libertà",
+    # ── LifeGate ─────────────────────────────────────────────────────────
+    "lifegate.it": "LifeGate",
+    "lifegate": "LifeGate",
+    # ── ANCI ─────────────────────────────────────────────────────────────
+    "anci.it": "ANCI",
+    "anci lombardia": "ANCI",
+    # ── Ministero del Lavoro e delle Politiche Sociali ───────────────────
+    "lavoro.gov.it": "Ministero del Lavoro e delle Politiche Sociali",
+    "ministero del lavoro e delle politiche sociali": "Ministero del Lavoro e delle Politiche Sociali",
+    # ── Consulta di Bioetica ─────────────────────────────────────────────
+    "consultadibioetica.org": "Consulta di Bioetica",
+    "consulta di bioetica": "Consulta di Bioetica",
+    # ── Federazione Cure Palliative ──────────────────────────────────────
+    "curepalliative.info": "Federazione Cure Palliative",
+    "federazione cure palliative": "Federazione Cure Palliative",
+    # ── Mondadori Education ──────────────────────────────────────────────
+    "mondadorieducation.it": "Mondadori Education",
+    "mondadori education": "Mondadori Education",
+    # ── La Stampa ────────────────────────────────────────────────────────
+    "lastampa.it": "La Stampa",
+    "la stampa": "La Stampa",
+    # ── Focus ────────────────────────────────────────────────────────────
+    "focus.it": "Focus",
+}
+
+
+def resolve_entity(name: str) -> str:
+    """
+    Map a domain or YouTube channel name to a canonical entity.
+    Strategy:
+      1. Exact lowercase match
+      2. Substring match (handles 'La7 Attualità – Notizie del giorno' etc.)
+      3. Fall back to the original name
+    """
+    if not name:
+        return name
+    key = name.lower().strip()
+    if key in ENTITY_MAP:
+        return ENTITY_MAP[key]
+    for k, entity in ENTITY_MAP.items():
+        if len(k) > 4 and (key.startswith(k) or k in key):
+            return entity
+    return name
+
+
 # subtopics of the legacy "sicurezza_pubblica" topic that get folded into immigrazione;
 # every other "sicurezza_pubblica" row is discarded.
 SICUREZZA_TO_IMMIGRAZIONE = [

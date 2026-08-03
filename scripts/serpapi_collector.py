@@ -306,7 +306,7 @@ def parse_date(date_str: Optional[str], reference: datetime) -> Optional[str]:
         return None
     parsed = dateparser.parse(
         date_str,
-        languages=["it"],  # ← parametro separato, non dentro settings
+        languages=[SEARCH_LANG],  # ← parametro separato, non dentro settings
         settings={
             "RELATIVE_BASE": reference,
             "PREFER_DAY_OF_MONTH": "first",

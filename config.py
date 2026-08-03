@@ -45,12 +45,10 @@ TOPIC_HINTS = {
     "cittadinanza": "ius soli, ius scholae, doppia cittadinanza, naturalizzazione per residenza",
     "fine_vita": "eutanasia legale, suicidio assistito, cure palliative, testamento biologico",
     "separazione delle carriere": "riforma CSM, giudici e PM separati, indipendenza della magistratura, correntismo giudiziario",
-    "premierato": "elezione diretta del premier, poteri del presidente della Repubblica, riforma costituzionale, stabilità di governo",
     "energia_nucleare": "nucleare di nuova generazione, small modular reactor, uscita dal gas, transizione energetica",
     "armi_ucraina": "invio armi all'Ucraina, supporto militare, neutralità italiana, escalation conflitto",
     "memoria_storica_antifascismo": "commemorazioni 25 aprile, revisionismo storico, fascismo e antifascismo, memoria pubblica",
     "liberta_di_stampa_rai": "riforma RAI, editoria pubblica, par condicio, libertà di informazione",
-    "costo_della_vita_tasse": "flat tax, cuneo fiscale, inflazione, potere d'acquisto",
     "fuga_dei_cervelli": "brain drain, incentivi al rientro, università pubblica, investimenti in ricerca",
     "israele_palestina": "riconoscimento Palestina, embargo armi Israele, soluzione due stati, cooperazione internazionale",
 }
