@@ -1,6 +1,5 @@
 # aio-political-audit
 
-> ⚠️ **Work in Progress** — this repository reflects the current state of an ongoing MSc dissertation project. Everything — scope, structure, scripts, and methodology — is actively evolving.
 
 An empirical audit of **Google AI Overviews (AIO)** on politically sensitive Italian-language queries. The project investigates whether AIO appears or not, if it systematically privileges certain sources, framings, or perspectives across politically polarising topics in Italy — and whether the sources it cites overlap with organic page rankings.
 
@@ -24,11 +23,11 @@ The pipeline (generate polarised queries → collect SERP/AIO data → analyse p
 
 | What you want to change | Where |
 |---|---|
-| **Country / search locale** | `lang` / `country` params (`hl`, `gl`) in `fetch_serp()`, `scripts/serpapi_collector.py` — currently `"it"` / `"it"` |
+| **Country / search locale** | `SEARCH_LANG` / `SEARCH_COUNTRY` (`hl`, `gl`) in `config.py` — currently `"it"` / `"it"` |
 | **Language of generated queries & prompts** | `SUBTOPICS_PROMPT`, `QUERIES_PROMPT`, `STANCE_INSTRUCTIONS` in `config.py` — all written in Italian, including the example queries inside the prompts (LLMs follow the language of the examples closely) |
 | **Topics & subtopics to audit** | `TOPIC_HINTS` in `config.py` — one entry per macro topic, with a few example subtopics as a steering hint for Step 1 |
 | **How many queries per subtopic/stance** | `N_PER_STANCE` in `config.py` (currently 8 → 24 queries per subtopic: pro/neutral/contro) |
-| **The pro/con political axis itself** | Hardcoded as binary `destra`/`sinistra` (right/left) in `generate_subtopics.py`'s validation (`leaning in ("destra", "sinistra")`) and throughout the prompts. A multi-party or non-left/right system would need this generalised to an arbitrary label set |
+| **The pro/con political axis itself** | `POLITICAL_LEANINGS` in `config.py` — a binary `("destra", "sinistra")` (right/left) pair by default, used both in `generate_subtopics.py`'s validation and to fill in the prompt text. A multi-party or non-left/right system would need this generalised to an arbitrary label set |
 | **LLM backend** | `call_llm()` in `config.py` uses the `openai` Python SDK with `LLM_MODEL = "gpt-4o"` and `ELM_API_KEY` — swap the model name/key, or add a `base_url` for a different OpenAI-compatible endpoint |
 | **Language of the analysis output (plots, labels)** | `analysis/common.py`: `STANCE_TRANSLATIONS`, `LEANING_TRANSLATIONS`, `TOPIC_TRANSLATIONS` map the collected Italian codes to the English labels used in every plot. The analysis logic itself (Jaccard overlap, domain extraction, UGC detection, etc.) operates on domains and structured fields, not on query text, so it's language-agnostic downstream of these three dictionaries |
 | **Scale** | The only hard constraints are SerpAPI/LLM rate limits and cost — the collector's resume mode (see Step 3 below) makes it safe to run in batches over multiple sessions regardless of how many topics/queries you configure |

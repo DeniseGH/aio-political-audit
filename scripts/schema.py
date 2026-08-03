@@ -9,7 +9,9 @@ class SerpRecord:
     query: str
     topic: str
     subtopic: Optional[str] = None
-    pro_leaning: Optional[str] = None  # destra / sinistra
+    pro_leaning: Optional[str] = (
+        None  # one of config.POLITICAL_LEANINGS (default: destra / sinistra)
+    )
     stance: Optional[str] = None  # pro / neutrale / contro
     timestamp_utc: str = field(
         default_factory=lambda: datetime.now(timezone.utc).isoformat()

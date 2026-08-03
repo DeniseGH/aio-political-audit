@@ -13,7 +13,14 @@ from typing import Optional
 from urllib.parse import urlparse
 
 sys.path.append(str(Path(__file__).parent.parent))
-from config import SERPAPI_KEY, QUERIES_REVIEWED_CSV, DATA_RAW, DATA_PROCESSED
+from config import (
+    SERPAPI_KEY,
+    QUERIES_REVIEWED_CSV,
+    DATA_RAW,
+    DATA_PROCESSED,
+    SEARCH_LANG,
+    SEARCH_COUNTRY,
+)
 from schema import SerpRecord
 
 # ── Logging ───────────────────────────────────────────────────────────────────
@@ -42,7 +49,7 @@ def fetch_aio_content(page_token: str) -> dict:
 
 
 def fetch_serp(
-    query: str, lang: str = "it", country: str = "it", retries: int = 2
+    query: str, lang: str = SEARCH_LANG, country: str = SEARCH_COUNTRY, retries: int = 2
 ) -> tuple[dict, int]:
     """Returns (raw_response, number_of_attempts)."""
     params = {

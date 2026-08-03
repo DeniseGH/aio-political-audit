@@ -16,6 +16,10 @@ SERPAPI_KEY = os.getenv("SERPAPI_KEY")
 ELM_API_KEY = os.getenv("ELM_API_KEY")
 YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 
+# SerpApi search locale (hl = interface language, gl = country)
+SEARCH_LANG = "it"
+SEARCH_COUNTRY = "it"
+
 LLM_MODEL = "gpt-4o"
 
 
@@ -53,17 +57,21 @@ TOPIC_HINTS = {
 
 TOPICS = list(TOPIC_HINTS.keys())
 
+# The two poles of the political axis subtopics are scored against.
+# A multi-party or non-left/right system can swap in a different label pair here.
+POLITICAL_LEANINGS = ("destra", "sinistra")
+
 SUBTOPICS_PROMPT = (
     "Sei un esperto di politica italiana. Per il macro-tema '{topic}', "
     "genera {n} sottotemi fortemente polarizzanti nel dibattito italiano, "
-    "cioè questioni su cui destra e sinistra si trovano tipicamente su fronti opposti.\n"
+    "cioè questioni su cui {leaning_a} e {leaning_b} si trovano tipicamente su fronti opposti.\n"
     "{hint_line}"
-    "Per ogni sottotema indica anche quale schieramento politico è tipicamente FAVOREVOLE: 'destra' o 'sinistra'.\n"
+    "Per ogni sottotema indica anche quale schieramento politico è tipicamente FAVOREVOLE: '{leaning_a}' o '{leaning_b}'.\n"
     "Formato richiesto — una riga per sottotema, con pipe come separatore:\n"
-    "  <sottotema>|<destra o sinistra>\n"
+    "  <sottotema>|<{leaning_a} o {leaning_b}>\n"
     "Esempio:\n"
-    "  chiusura dei porti|destra\n"
-    "  ius scholae|sinistra\n"
+    "  chiusura dei porti|{leaning_a}\n"
+    "  ius scholae|{leaning_b}\n"
     "Regole: il sottotema deve essere espresso in italiano con 2-6 parole. "
     "Nessuna numerazione, nessuna punteggiatura finale, nessun testo aggiuntivo."
 )

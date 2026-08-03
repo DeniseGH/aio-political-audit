@@ -15,6 +15,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 from config import (
     ELM_API_KEY,
+    POLITICAL_LEANINGS,
     SUBTOPICS_CSV,
     SUBTOPICS_PROMPT,
     TOPIC_HINTS,
@@ -27,10 +28,13 @@ if not ELM_API_KEY:
 
 
 def generate_subtopics(topic: str, n: int = 8) -> list[tuple[str, str]]:
-    """Return list of (subtopic, pro_leaning) where pro_leaning is 'left' or 'right'."""
+    """Return list of (subtopic, pro_leaning) where pro_leaning is one of POLITICAL_LEANINGS."""
+    leaning_a, leaning_b = POLITICAL_LEANINGS
     hint = TOPIC_HINTS.get(topic, "")
     hint_line = f"Esempi di sottotemi rilevanti: {hint}.\n" if hint else ""
-    prompt = SUBTOPICS_PROMPT.format(topic=topic, n=n, hint_line=hint_line)
+    prompt = SUBTOPICS_PROMPT.format(
+        topic=topic, n=n, hint_line=hint_line, leaning_a=leaning_a, leaning_b=leaning_b
+    )
 
     rows = []
     for line in call_llm(prompt, temperature=0.7).splitlines():
@@ -40,7 +44,7 @@ def generate_subtopics(topic: str, n: int = 8) -> list[tuple[str, str]]:
         parts = line.split("|", 1)
         subtopic = parts[0].strip()
         leaning = parts[1].strip().lower()
-        if subtopic and leaning in ("destra", "sinistra"):
+        if subtopic and leaning in POLITICAL_LEANINGS:
             rows.append((subtopic, leaning))
     return rows
 
