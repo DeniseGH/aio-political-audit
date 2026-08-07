@@ -3,7 +3,7 @@
 
 An empirical audit of **Google AI Overviews (AIO)** on politically sensitive Italian-language queries. The project investigates whether AIO appears or not, if it systematically privileges certain sources, framings, or perspectives across politically polarising topics in Italy — and whether the sources it cites overlap with organic page rankings.
 
-This research is conducted as part of an MSc in Data and Artificial Intelligence Ethics at the **University of Edinburgh (Edinburgh Futures Institute)**, in partnership with **Democracy Reporting International**. I am funded by a **Banca d'Italia Giorgio Mortara scholarship**.
+This research is conducted as part of an MSc in Data and Artificial Intelligence Ethics at the **University of Edinburgh (Edinburgh Futures Institute)**, in partnership with **Democracy Reporting International**.
 
 Beyond this specific study, the repository is meant to work as a **reusable audit framework**: end-to-end, from generating politically-framed search queries to analysing what an AI Overview does and doesn't cite. Everything here is built around Italian politics, but every country/language-specific choice lives in a small number of places — see [Reusing this framework](#reusing-this-framework-for-a-different-context) below.
 
@@ -86,7 +86,7 @@ immigration,immigrazione,chiusura dei porti,destra,,,contro,perché la chiusura 
 
 > ⚠️ **Human review required**, same pattern as Step 1b. Review `queries/queries.csv` and save it as `queries/queries_human_reviewed.csv` — `serpapi_collector.py` reads from the reviewed file only and refuses to run without it.
 
-As of writing, `queries/queries_human_reviewed.csv` contains 2,017 reviewed queries (672 pro / 673 neutrale / 672 contro) across 84 subtopics and 14 topics — all 2,017 have been collected (see [Status](#status)). Both reviewed CSVs may be `;`- or `,`-delimited — the scripts sniff the delimiter automatically.
+As of writing, `queries/queries_human_reviewed.csv` contains 2,017 reviewed queries (672 pro / 673 neutrale / 672 contro) across 84 subtopics and 14 topics — all 2,017 have been collected. Both reviewed CSVs may be `;`- or `,`-delimited — the scripts sniff the delimiter automatically.
 
 ### Step 2c — Auxiliary query batches (optional, robustness checks)
 
@@ -145,16 +145,15 @@ aio-political-audit/
 │   ├── aio_analysis_test.ipynb          # Sanity-check for the human_short_queries.csv pilot batch
 ├── queries/                       # Generated subtopics and queries (gitignored for the moment)
 │   ├── subtopics.csv                    # Step 1 output (LLM-only, unreviewed)
-│   ├── subtopics_human_reviewed.csv     # Step 1b output — tracked in git despite the folder being gitignored
+│   ├── subtopics_human_reviewed.csv     # Step 1b output
 │   ├── queries.csv                      # Step 2 output (LLM-only, unreviewed)
-│   ├── queries_human_reviewed.csv       # Step 2b output — tracked in git despite the folder being gitignored
+│   ├── queries_human_reviewed.csv       # Step 2b output
 │   ├── human_short_queries.csv          # Step 2c: hand-written short/colloquial queries for the pilot robustness check
-│   └── symmetric_groups_detail.csv      # Step 2c: matched pro/contro(/neutrale) query pairs for the framing-sensitivity analysis
+│   └── symmetric_groups_detail.csv      # Step 2c: matched pros/cons(/neutral) query pairs for the framing-sensitivity analysis
 ├── data/
 │   ├── raw/                       # Raw JSON responses from SerpAPI, one file per run (gitignored)
 │   ├── processed/                 # serp_master.parquet, cumulative across all runs (gitignored)
 │   ├── raw_test/ / processed_test/  # Same, for the human_short_queries.csv pilot batch (gitignored)
-│   └── archive/                   # Older/superseded collection outputs (gitignored)
 ├── logs/                          # Collection logs (serpapi_collection.log)
 ├── config.py                      # Topics, prompts, paths, API key loading, LLM helper — main adaptation surface, see above
 ├── main.py                        # Entry point (placeholder)
@@ -249,7 +248,7 @@ Each collected record (`SerpRecord`) contains:
 
 ## Analysis Notebooks
 
-All notebooks load the collected `serp_raw_*.json` files themselves via `analysis/common.py::load_data()`, which folds minor topic/subtopic recodes (`cittadinanza` → `immigrazione`/`costo_della_vita_tasse`; `sicurezza_pubblica` → partly `immigrazione`, partly discarded — see [Topics](#topics)), and translates `topic` / `stance` (`pro`/`neutrale`/`contro` → `Pro`/`Neutral`/`Con`) / `pro_leaning` (`sinistra`/`destra` → `Left`/`Right`) to English for all plots.
+All notebooks load the collected `serp_raw_*.json` files themselves via `analysis/common.py::load_data()`, which folds minor topic/subtopic recodes (`cittadinanza` → `immigrazione`/`costo_della_vita_tasse`; `sicurezza_pubblica` → partly `immigrazione`, partly discarded — see [Topics](#topics)).
 
 ### Part 1 — `analysis/aio_analysis_1_presence.ipynb`
 
@@ -288,21 +287,3 @@ Pre-commit hooks (ruff linting + secret detection) are configured via `.pre-comm
 uv run pre-commit install
 uv run pre-commit run --all-files
 ```
-
----
-
-## Status
-
-| Component | Status |
-|---|---|
-| Subtopic generation (LLM) | ✅ Working — 15/17 topics through Step 1b (99 subtopics reviewed, 10 cross-partisan) |
-| Query generation — pro / neutrale / contro (LLM) | ✅ Working — 14/17 topics through Step 2b (2,017 queries reviewed) |
-| Data collection via SerpAPI (with resume mode) | ✅ Complete — all 2,017 reviewed queries collected across all 14 reviewed topics |
-| AIO extraction + two-stage retry logic | ✅ Working (known edge case: empty-content AIO shells, see Step 3 above) |
-| Analysis notebooks (presence, framing sensitivity, sources, entity-aware overlap) | ✅ Working |
-
----
-
-## License
-
-MIT
